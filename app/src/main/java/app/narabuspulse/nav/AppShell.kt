@@ -61,6 +61,7 @@ import androidx.compose.material3.SnackbarHostState
 class Nav(val controller: NavHostController) {
     fun go(webPath: String) {
         val route = webPathToRoute(webPath)
+        NavQuery.put(route, webPath)
         controller.navigate(route) { launchSingleTop = true }
     }
 
@@ -139,7 +140,9 @@ fun AppShell(onLogout: () -> Unit) {
                 NavHost(controller, startDestination = "home", modifier = Modifier.padding(padding).fillMaxSize()) {
                     SCREENS.forEach { def ->
                         composable(def.route) { backStack ->
-                            ScreenContent(def, backStack.arguments?.let { b -> b.keySet().associateWith { b.getString(it).orEmpty() } } ?: emptyMap())
+                            val pathArgs = backStack.arguments?.let { b -> b.keySet().associateWith { b.getString(it).orEmpty() } } ?: emptyMap()
+                            val queryArgs = androidx.compose.runtime.remember(backStack.id) { NavQuery.take(backStack.destination.route.orEmpty(), pathArgs) }
+                            ScreenContent(def, queryArgs + pathArgs)
                         }
                     }
                 }
@@ -149,6 +152,26 @@ fun AppShell(onLogout: () -> Unit) {
 }
 
 val LocalNav = androidx.compose.runtime.staticCompositionLocalOf<Nav> { error("Nav が未設定です") }
+
+/** Web のパスの ?key=value（画面への引数）。遷移先の画面が 1 回だけ受け取る。 */
+object NavQuery {
+    private val pending = HashMap<String, Map<String, String>>()
+
+    fun put(route: String, webPath: String) {
+        val q = webPath.substringAfter('?', "")
+        if (q.isEmpty()) return
+        val routePattern = SCREENS.firstOrNull { def ->
+            val re = Regex("^" + def.route.replace(Regex("\\{\\w+\\}"), "[^/]+") + "$")
+            re.matches(route)
+        }?.route ?: route
+        pending[routePattern] = q.split('&').filter { it.isNotEmpty() }.associate {
+            android.net.Uri.decode(it.substringBefore('=')) to android.net.Uri.decode(it.substringAfter('=', ""))
+        }
+    }
+
+    fun take(routePattern: String, @Suppress("UNUSED_PARAMETER") args: Map<String, String>): Map<String, String> =
+        pending.remove(routePattern) ?: emptyMap()
+}
 
 /** 開発用：adb から開く画面を指定する（デバッグ版のみ MainActivity が設定）。 */
 object DevRoute {

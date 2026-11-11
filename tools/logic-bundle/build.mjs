@@ -46,6 +46,8 @@ for (const file of candidates) {
     const r = await esbuild.build({
       entryPoints: [file], bundle: true, write: false, metafile: true, format: "esm", platform: "neutral",
       plugins: [alias], logLevel: "silent", mainFields: ["module", "main"],
+      // コメント中の単語（document など）で誤判定しないよう、コメントを除いてから調べる
+      minifyWhitespace: true, minifySyntax: true, legalComments: "none",
     });
     const imports = Object.values(r.metafile.outputs).flatMap((o) => o.imports || []);
     const inputs = Object.keys(r.metafile.inputs);
@@ -53,7 +55,7 @@ for (const file of candidates) {
     const usesJsx = inputs.some((i) => i.endsWith(".jsx"));
     const text = r.outputFiles[0].text;
     // localStorage / sessionStorage はアプリ側の保存領域で代用できる（Logic.kt）。それ以外のブラウザ機能は対象外
-    const touchesDom = /\b(window|document|navigator|indexedDB)\b/.test(text);
+    const touchesDom = /(?<![.\w$"'`])(window|document|navigator|indexedDB)\b(?!["'`])/.test(text);
     if (!usesExternal && !usesJsx && !touchesDom) pure.push(file);
   } catch {
     /* 単体でまとめられないものは対象外 */

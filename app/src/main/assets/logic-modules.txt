@@ -18,7 +18,9 @@ camera/features
 camera/props
 camera/ptp
 camera/wifiSettings
+catalog/csv
 catalog/favoriteKey
+catalog/fields
 collect/dailyPlan
 collect/serviceDay
 discover/payload
@@ -64,6 +66,7 @@ services/registry
 shoot/advice
 shoot/candidates
 shoot/chances
+shoot/conditions
 shoot/evaluate
 shoot/filter
 shoot/geometry

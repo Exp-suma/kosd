@@ -7,7 +7,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `admin/board` | 掲示板・車両情報の管理 | `admin.board.jsx` |
 | ⬜ 未移植 | `ai` | AIダッシュボード | `ai.jsx` |
 | ⬜ 未移植 | `ai-search` | AI自然言語検索 | `ai-search.jsx` |
-| ⬜ 未移植 | `all-vehicles` | 全車両マップ | `all-vehicles.jsx` |
+| 🟨 移植済み（エミュレーターで表示確認） | `all-vehicles` | 全車両マップ | `all-vehicles.jsx` |
 | ⬜ 未移植 | `analysis` | 時間帯別分析 | `analysis.jsx` |
 | ⬜ 未移植 | `analytics/continuity` | 運用の連続性 | `analytics.continuity.jsx` |
 | ⬜ 未移植 | `analytics/fleet` | 車両配置・稼働分析 | `analytics.fleet.jsx` |
@@ -41,10 +41,10 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `field` | 現地モード | `field.index.jsx` |
 | ⬜ 未移植 | `field/map` | 保存済み地図 | `field.map.jsx` |
 | ⬜ 未移植 | `field/records` | 現地記録 | `field.records.jsx` |
-| ⬜ 未移植 | `fleet/{carCode}` | 車両詳細 | `fleet.$carCode.jsx` |
-| ⬜ 未移植 | `fleet/favorites` | お気に入り車両 | `fleet.favorites.jsx` |
-| ⬜ 未移植 | `fleet` | 車番検索 | `fleet.index.jsx` |
-| ⬜ 未移植 | `fleet/logs` | 全車両ログ | `fleet.logs.jsx` |
+| 🟨 移植済み（未検証） | `fleet/{carCode}` | 車両詳細 | `fleet.$carCode.jsx` |
+| 🟨 移植済み（未検証） | `fleet/favorites` | お気に入り車両 | `fleet.favorites.jsx` |
+| 🟨 移植済み（未検証） | `fleet` | 車番検索 | `fleet.index.jsx` |
+| 🟨 移植済み（未検証） | `fleet/logs` | 全車両ログ | `fleet.logs.jsx` |
 | ⬜ 未移植 | `forecast/accuracy` | 予測精度分析 | `forecast.accuracy.jsx` |
 | ⬜ 未移植 | `forecast/history` | 予測履歴 | `forecast.history.jsx` |
 | ⬜ 未移植 | `forecast` | 1日運用予測 | `forecast.index.jsx` |
@@ -116,7 +116,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `sightings` | 目撃情報マップ | `sightings.jsx` |
 | ⬜ 未移植 | `sim3d` | AI撮影環境3Dシミュレーター | `sim3d.index.jsx` |
 | ⬜ 未移植 | `sim3d/saved` | 保存したシミュレーション | `sim3d.saved.jsx` |
-| ⬜ 未移植 | `status` | 車両状態一覧 | `status.jsx` |
+| 🟨 移植済み（未検証） | `status` | 車両状態一覧 | `status.jsx` |
 | ⬜ 未移植 | `terrain/{routeName}` | 路線地形 | `terrain.$routeName.jsx` |
 | ⬜ 未移植 | `terrain/ai` | AI地形分析 | `terrain.ai.jsx` |
 | ⬜ 未移植 | `terrain/compare` | 路線比較 | `terrain.compare.jsx` |
