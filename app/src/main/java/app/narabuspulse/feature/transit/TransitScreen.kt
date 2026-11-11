@@ -215,7 +215,7 @@ fun TransitScreen(args: Map<String, String>) {
 
 /** 駅名・停留所名・施設名の候補検索と緯度経度指定（Web: PlaceField.jsx） */
 @Composable
-private fun PlaceField(label: String, value: Place?, onChange: (Place?) -> Unit, placeholder: String) {
+fun PlaceField(label: String, value: Place?, onChange: (Place?) -> Unit, placeholder: String) {
     val scope = rememberCoroutineScope()
     var text by remember { mutableStateOf(value?.label.orEmpty()) }
     LaunchedEffect(value) { if (value != null) text = value.label }
