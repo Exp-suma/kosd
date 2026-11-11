@@ -63,6 +63,12 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("settings/offline") { _ -> app.narabuspulse.feature.field.OfflineSettingsScreen() }
     put("field") { _ -> app.narabuspulse.feature.field.FieldHomeScreen() }
     put("outing") { _ -> app.narabuspulse.feature.outing.OutingDashboardScreen() }
+    put("collection") { _ -> app.narabuspulse.feature.collect.CollectionScreen() }
+    put("ai") { _ -> app.narabuspulse.feature.collect.AiDashboardScreen() }
+    put("assistant") { _ -> app.narabuspulse.feature.chat.AssistantScreen(null) }
+    put("assistant/{conversationId}") { a -> app.narabuspulse.feature.chat.AssistantScreen(a["conversationId"]) }
+    put("expert") { _ -> app.narabuspulse.feature.chat.ExpertHomeScreen() }
+    put("expert/{conversationId}") { a -> app.narabuspulse.feature.chat.ExpertConversationScreen(a["conversationId"].orEmpty()) }
     put("expedition") { _ -> app.narabuspulse.feature.expedition.ExpeditionListScreen() }
     put("expedition/{planId}") { a -> app.narabuspulse.feature.expedition.ExpeditionDetailScreen(a["planId"].orEmpty()) }
     put("outing/plans") { _ -> app.narabuspulse.feature.outing.OutingPlansScreen() }

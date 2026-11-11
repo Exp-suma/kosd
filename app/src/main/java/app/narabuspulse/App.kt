@@ -11,5 +11,6 @@ class App : Application() {
         app.narabuspulse.core.Net.init(this)
         app.narabuspulse.core.Notifier.createChannels(this)
         app.narabuspulse.core.offline.OfflineStore.init(this)
+        app.narabuspulse.feature.meter.MeterStore.init(this)
     }
 }
