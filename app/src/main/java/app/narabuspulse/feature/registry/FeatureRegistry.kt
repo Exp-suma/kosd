@@ -60,6 +60,12 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("vehicle-catalog/{fleetNumber}") { a -> app.narabuspulse.feature.catalog.CatalogDetailScreen(a["fleetNumber"].orEmpty()) }
     put("settings") { _ -> app.narabuspulse.feature.settings.BasicSettingsScreen() }
     put("settings/notify") { _ -> app.narabuspulse.feature.settings.NotifySettingsScreen() }
+    put("settings/offline") { _ -> app.narabuspulse.feature.field.OfflineSettingsScreen() }
+    put("field") { _ -> app.narabuspulse.feature.field.FieldHomeScreen() }
+    put("field/records") { _ -> app.narabuspulse.feature.field.FieldRecordsScreen() }
+    put("field/map") { _ -> app.narabuspulse.feature.field.FieldMapScreen() }
+    put("field/data") { _ -> app.narabuspulse.feature.field.FieldDataScreen() }
+    put("field/conflicts") { _ -> app.narabuspulse.feature.field.FieldConflictsScreen() }
     put("settings/monitor") { _ -> app.narabuspulse.feature.settings.MonitorSettingsScreen() }
     put("settings/performance") { _ -> app.narabuspulse.feature.settings.PerformanceSettingsScreen() }
     put("settings/data") { _ -> app.narabuspulse.feature.settings.DataSettingsScreen() }
