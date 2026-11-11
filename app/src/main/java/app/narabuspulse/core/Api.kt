@@ -62,7 +62,32 @@ object Api {
     }
 
     private suspend fun call(req: Request): JsonElement = withContext(Dispatchers.IO) {
-        http.newCall(req).execute().use { it.readJson() }
+        val started = System.currentTimeMillis()
+        val path = req.url.encodedPath
+        val entity = Regex("/entities/([^/]+)").find(path)?.groupValues?.get(1)
+        try {
+            val out = http.newCall(req).execute().use { it.readJson() }
+            record(req, path, entity, true, System.currentTimeMillis() - started, 200, null)
+            out
+        } catch (e: Throwable) {
+            record(req, path, entity, false, System.currentTimeMillis() - started, (e as? ApiException)?.status ?: 0, e)
+            throw e
+        }
+    }
+
+    /** 端末内の通信記録（システム状態モニター用）。 */
+    private fun record(req: Request, path: String, entity: String?, ok: Boolean, ms: Long, status: Int, e: Throwable?) {
+        runCatching {
+            if (entity != null) Telemetry.recordDb(entity, req.method != "GET", ok, ms, e)
+            val label = when {
+                path.contains("/api/native/rpc") -> Telemetry.APP
+                entity != null -> "Base44 エンティティ"
+                path.contains("/auth") -> "Base44 認証"
+                path.contains("integration-endpoints") -> "Base44 ファイル"
+                else -> "Base44 API"
+            }
+            Telemetry.recordApi(label, ok, ms, status, e, entity ?: path.substringAfterLast('/'))
+        }
     }
 
     private fun jsonBody(data: JsonElement) = data.toString().toRequestBody(JSON_TYPE)

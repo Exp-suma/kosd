@@ -198,6 +198,9 @@ object BusRepository {
     val INTERVAL_MS: Long get() = app.narabuspulse.core.Net.plan.value.intervalMs
     val logDays: Int get() = app.narabuspulse.core.Net.plan.value.logDays
 
+    /** 次の表示で取り直す（設定変更・キャッシュ削除のあと）。 */
+    fun invalidate() { _state.value = _state.value.copy(loadedAt = 0) }
+
     suspend fun refresh(force: Boolean = false) {
         mutex.withLock {
             val s = _state.value

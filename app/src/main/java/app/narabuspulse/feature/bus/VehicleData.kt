@@ -49,6 +49,7 @@ fun rememberVehicleGps(refreshKey: Any?): GpsState {
     val plan by Net.plan.collectAsState()
     LaunchedEffect(refreshKey, plan.gpsMs) {
         while (true) {
+            val started = System.currentTimeMillis()
             try {
                 val res = Api.rpc("server-fns#getVehicleGpsStates")
                 val map = (res.obj ?: JsonObject(emptyMap())).mapNotNull { (code, v) ->
@@ -56,10 +57,12 @@ fun rememberVehicleGps(refreshKey: Any?): GpsState {
                     if (lat == null || lon == null) null else code to Gps(lat, lon, v.long("at"))
                 }.toMap()
                 state = GpsState(map, false, null)
+                app.narabuspulse.core.Telemetry.recordGps(true, System.currentTimeMillis() - started)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
                 state = GpsState(state.byCode, false, e.userMessage().ifBlank { "車両のGPS情報を取得できませんでした" })
+                app.narabuspulse.core.Telemetry.recordGps(false, System.currentTimeMillis() - started, state.error.orEmpty())
             }
             delay(plan.gpsMs)
         }
