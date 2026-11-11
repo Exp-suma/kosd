@@ -3,4 +3,9 @@
     <string name="app_url">https://nara-bus-pulse.base44.app/</string>
     <string name="offline_message">インターネットに接続できません。\n接続を確認してから再読み込みしてください。</string>
     <string name="retry">再読み込み</string>
+    <string name="google_login_title">Google ログインについて</string>
+    <string name="google_login_message">Google の制限により、このアプリ内では「Continue with Google」でログインできません。\n\nメールアドレスとパスワードでログインしてください。Googleでしか登録していない場合は、ログイン画面の「Forgot password?」からパスワードを設定できるか試してください。</string>
+    <string name="download_saved">「ダウンロード」フォルダに保存しました: %1$s</string>
+    <string name="download_saved_simple">保存しました</string>
+    <string name="download_failed">ファイルを保存できませんでした</string>
 </resources>

@@ -10,8 +10,8 @@ android {
         applicationId 'app.narabuspulse'
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '1.1'
     }
 
     // GitHub Actions などで環境変数から署名鍵を渡す（未設定ならデバッグ鍵で署名）

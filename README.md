@@ -6,7 +6,9 @@ https://nara-bus-pulse.base44.app/ を全画面の WebView で表示する Andro
 - アプリ起動で Web アプリを全画面表示（アドレスバーなし）
 - 戻るボタンでページ履歴を戻る
 - 位置情報（現在地）の利用に対応（初回に許可ダイアログ）
-- ファイル選択（アップロード）に対応
+- カメラ（メーター読み取りなど）に対応（初回に許可ダイアログ）
+- ファイル選択（CSV 取り込みなど）に対応
+- CSV / JSON バックアップ / PDF などの書き出しを「ダウンロード」フォルダに保存（Android 9 以前は保存先を選択）
 - ログイン状態（Cookie / localStorage）を保持
 - base44 以外のリンク・電話・地図などは外部アプリで開く
 - オフライン時は再読み込みボタンを表示
@@ -55,6 +57,9 @@ keytool -genkeypair -v -keystore release.jks -alias narabus -keyalg RSA -keysize
 - アイコン: `app/src/main/res/drawable/ic_launcher_foreground.xml`
 - パッケージ名: `app/build.gradle` の `applicationId`
 
-## 注意
-Google アカウントでのログイン（Google OAuth）は Google の方針により WebView 内でブロックされる場合があります。
-その場合はメール/パスワードでのログインを使うか、TWA（Trusted Web Activity）方式への切り替えを検討してください。
+## 制限事項
+- **Google ログイン**: Google は WebView 内でのログインを禁止しているため、「Continue with Google」を押すと案内を表示します。メールアドレスとパスワードでログインしてください。
+- **プッシュ通知**: Web プッシュ（Service Worker + PushManager）は Android の WebView では使えません。
+- **共有ボタン**: Web Share API が無いため、サイト側の処理でリンクのコピーになります。
+
+Google ログインやプッシュ通知が必要な場合は、Chrome で動く TWA（Trusted Web Activity）方式への切り替えを検討してください。
