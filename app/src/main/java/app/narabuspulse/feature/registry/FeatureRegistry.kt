@@ -63,6 +63,13 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("settings/offline") { _ -> app.narabuspulse.feature.field.OfflineSettingsScreen() }
     put("field") { _ -> app.narabuspulse.feature.field.FieldHomeScreen() }
     put("outing") { _ -> app.narabuspulse.feature.outing.OutingDashboardScreen() }
+    put("meter") { _ -> app.narabuspulse.feature.meter.MeterScreen() }
+    put("meter/cameras") { _ -> app.narabuspulse.feature.meter.MeterCamerasScreen() }
+    put("meter/lenses") { _ -> app.narabuspulse.feature.meter.MeterLensesScreen() }
+    put("meter/combos") { _ -> app.narabuspulse.feature.meter.MeterCombosScreen() }
+    put("meter/presets") { _ -> app.narabuspulse.feature.meter.MeterPresetsScreen() }
+    put("meter/calibration") { _ -> app.narabuspulse.feature.meter.MeterCalibrationScreen() }
+    put("meter/history") { _ -> app.narabuspulse.feature.meter.MeterHistoryScreen() }
     put("collection") { _ -> app.narabuspulse.feature.collect.CollectionScreen() }
     put("ai") { _ -> app.narabuspulse.feature.collect.AiDashboardScreen() }
     put("assistant") { _ -> app.narabuspulse.feature.chat.AssistantScreen(null) }
