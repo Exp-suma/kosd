@@ -70,6 +70,8 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("services/transit") { _ -> app.narabuspulse.feature.services.ServiceTransitScreen() }
     put("services/x") { _ -> app.narabuspulse.feature.services.XSearchScreen() }
     put("install") { _ -> app.narabuspulse.feature.services.InstallScreen() }
+    put("timetable") { a -> app.narabuspulse.feature.predict.IntersectionTimetableScreen(a) }
+    put("timetable/favorites") { _ -> app.narabuspulse.feature.predict.TimetableFavoritesScreen() }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }
