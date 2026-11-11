@@ -82,6 +82,7 @@ object OfflineStore {
             _conflicts.value = readList(conflictsFile)
             refreshStats()
         }
+        loadSaved()
         watchConnectivity()
     }
 
@@ -390,6 +391,151 @@ object OfflineStore {
         var n = 0
         mutate { list -> val keep = list.filter { !(it.str("syncState") == SYNC.synced && (it.long("syncedAt") ?: 0) < cutoff) }; n = list.size - keep.size; list.clear(); list.addAll(keep) }
         return n
+    }
+
+    // ---------------- 保存済みデータ（種類ごと）・地域 ----------------
+
+    private val partsDir by lazy { File(dir, "parts").apply { mkdirs() } }
+    private val areasFile get() = File(dir, "areas.json")
+    private val _parts = MutableStateFlow<List<JsonObject>>(emptyList())
+    /** 保存済みデータ（Web の useSavedParts と同じ：key・label・rows・count・bytes・savedAt …）。 */
+    val parts: StateFlow<List<JsonObject>> = _parts
+    private val _areas = MutableStateFlow<List<JsonObject>>(emptyList())
+    val areas: StateFlow<List<JsonObject>> = _areas
+
+    fun loadSaved() {
+        scope.launch {
+            _parts.value = partsDir.listFiles()?.mapNotNull { runCatching { Json.parse(it.readText()) as? JsonObject }.getOrNull() }.orEmpty().sortedByDescending { it.long("savedAt") ?: 0 }
+            _areas.value = readList(areasFile).sortedByDescending { it.long("savedAt") ?: 0 }
+            _tiles.value = readTileIndex()
+        }
+    }
+
+    fun part(key: String): JsonObject? = _parts.value.firstOrNull { it.str("key") == key }
+
+    suspend fun savePart(part: JsonObject) = withContext(Dispatchers.IO) {
+        val key = part.str("key") ?: return@withContext
+        File(partsDir, "$key.json").writeText(part.toString())
+        _parts.value = (_parts.value.filter { it.str("key") != key } + part).sortedByDescending { it.long("savedAt") ?: 0 }
+    }
+
+    suspend fun removePart(key: String) = withContext(Dispatchers.IO) { File(partsDir, "$key.json").delete(); _parts.value = _parts.value.filter { it.str("key") != key } }
+
+    suspend fun saveArea(area: JsonObject) = withContext(Dispatchers.IO) {
+        val list = (_areas.value.filter { it.str("id") != area.str("id") } + area).sortedByDescending { it.long("savedAt") ?: 0 }
+        writeList(areasFile, list); _areas.value = list
+    }
+
+    suspend fun deleteArea(id: String) = withContext(Dispatchers.IO) {
+        deleteTilesOfArea(id)
+        val list = _areas.value.filter { it.str("id") != id }; writeList(areasFile, list); _areas.value = list
+    }
+
+    // ---------------- 地図タイル ----------------
+
+    val TILE_MAX_ZOOM = 14
+    private const val TILE_SPACING_MS = 120L
+    data class TileRef(val key: String, val z: Int, val x: Int, val y: Int, val bytes: Long, val areaId: String, val savedAt: Long)
+    private val tileIndexFile get() = File(dir, "tiles.json")
+    private val _tiles = MutableStateFlow<Map<String, TileRef>>(emptyMap())
+    val tiles: StateFlow<Map<String, TileRef>> = _tiles
+    private val tileWriter by lazy { app.narabuspulse.ui.kit.OsmConfig.ensure(ctx); org.osmdroid.tileprovider.modules.SqlTileWriter() }
+    private val tileHttp by lazy { okhttp3.OkHttpClient.Builder().callTimeout(20, java.util.concurrent.TimeUnit.SECONDS).build() }
+
+    private fun readTileIndex(): Map<String, TileRef> = readList(tileIndexFile).mapNotNull { t ->
+        val k = t.str("key") ?: return@mapNotNull null
+        k to TileRef(k, t.int("z") ?: 0, t.int("x") ?: 0, t.int("y") ?: 0, t.long("bytes") ?: 0, t.str("areaId").orEmpty(), t.long("savedAt") ?: 0)
+    }.toMap()
+    private fun writeTileIndex(m: Map<String, TileRef>) = writeList(tileIndexFile, m.values.map { jsonOf("key" to it.key, "z" to it.z, "x" to it.x, "y" to it.y, "bytes" to it.bytes, "areaId" to it.areaId, "savedAt" to it.savedAt) })
+
+    private fun latLonToTile(lat: Double, lon: Double, z: Int): Pair<Int, Int> {
+        val n = 1 shl z; val latRad = Math.toRadians(lat)
+        val x = Math.floor((lon + 180) / 360 * n).toInt()
+        val y = Math.floor((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n).toInt()
+        return ((x % n) + n) % n to y.coerceIn(0, n - 1)
+    }
+    private fun tileCenter(z: Int, x: Int, y: Int): Pair<Double, Double> { val n = (1 shl z).toDouble(); return Math.toDegrees(Math.atan(Math.sinh(Math.PI * (1 - 2 * (y + 0.5) / n)))) to (x + 0.5) / n * 360 - 180 }
+    fun distanceKm(aLat: Double, aLon: Double, bLat: Double, bLon: Double): Double {
+        val dLat = Math.toRadians(bLat - aLat); val dLon = Math.toRadians(bLon - aLon)
+        val h = Math.sin(dLat / 2).let { it * it } + Math.cos(Math.toRadians(aLat)) * Math.cos(Math.toRadians(bLat)) * Math.sin(dLon / 2).let { it * it }
+        return 2 * 6371 * Math.asin(minOf(1.0, Math.sqrt(h)))
+    }
+
+    /** 指定した範囲に入るタイルを、中心に近い順に返す（Web の tilesForRadius と同じ）。 */
+    fun tilesForRadius(lat: Double, lon: Double, radiusKm: Double, zooms: List<Int>, limit: Int): List<Triple<Int, Int, Int>> {
+        val out = mutableListOf<Pair<Triple<Int, Int, Int>, Double>>(); val seen = HashSet<String>()
+        val dLon = radiusKm / (111 * Math.cos(Math.toRadians(lat))).let { if (it == 0.0) 1.0 else it }
+        zooms.filter { it in 1..TILE_MAX_ZOOM }.forEach { z ->
+            val nw = latLonToTile(lat + radiusKm / 111, lon - dLon, z); val se = latLonToTile(lat - radiusKm / 111, lon + dLon, z)
+            for (x in minOf(nw.first, se.first)..maxOf(nw.first, se.first)) for (y in minOf(nw.second, se.second)..maxOf(nw.second, se.second)) {
+                if (!seen.add("$z/$x/$y")) continue
+                val c = tileCenter(z, x, y); out += Triple(z, x, y) to distanceKm(lat, lon, c.first, c.second)
+            }
+        }
+        return out.sortedBy { it.second }.take(limit).map { it.first }
+    }
+
+    data class TileResult(val total: Int, val saved: Int, val skipped: Int, val failed: Int, val bytes: Long, val stopped: Boolean)
+
+    /** タイルを少しずつ保存する（OpenStreetMap の利用規約に合わせ、狭い範囲・上限枚数・間隔をあけた順次取得）。 */
+    suspend fun prefetchTiles(lat: Double, lon: Double, radiusKm: Double, zooms: List<Int>, maxTiles: Int, areaId: String, shouldStop: () -> Boolean, onProgress: (TileResult, Int) -> Unit): TileResult = withContext(Dispatchers.IO) {
+        val targets = tilesForRadius(lat, lon, radiusKm, zooms, maxTiles)
+        var saved = 0; var skipped = 0; var failed = 0; var bytes = 0L; var stopped = false
+        val index = _tiles.value.toMutableMap()
+        for ((i, t) in targets.withIndex()) {
+            if (shouldStop()) { stopped = true; break }
+            val (z, x, y) = t; val key = "$z/$x/$y"
+            val existing = index[key]
+            if (existing != null) { skipped++; bytes += existing.bytes }
+            else {
+                try {
+                    val req = okhttp3.Request.Builder().url("https://tile.openstreetmap.org/$z/$x/$y.png").header("User-Agent", ctx.packageName).build()
+                    val body = tileHttp.newCall(req).execute().use { r -> if (!r.isSuccessful) throw IllegalStateException("HTTP ${r.code}"); r.body.bytes() }
+                    if (body.isEmpty()) throw IllegalStateException("空のタイル")
+                    tileWriter.saveFile(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK, org.osmdroid.util.MapTileIndex.getTileIndex(z, x, y), java.io.ByteArrayInputStream(body), Long.MAX_VALUE / 4)
+                    index[key] = TileRef(key, z, x, y, body.size.toLong(), areaId, System.currentTimeMillis())
+                    saved++; bytes += body.size
+                } catch (e: Throwable) { if (e is kotlinx.coroutines.CancellationException) throw e; failed++ }
+                delay(TILE_SPACING_MS)
+            }
+            onProgress(TileResult(targets.size, saved, skipped, failed, bytes, false), i + 1)
+        }
+        writeTileIndex(index); _tiles.value = index
+        TileResult(targets.size, saved, skipped, failed, bytes, stopped)
+    }
+
+    private fun deleteTilesOfArea(areaId: String) {
+        val index = _tiles.value.toMutableMap()
+        index.values.filter { it.areaId == areaId }.forEach { t -> runCatching { tileWriter.remove(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK, org.osmdroid.util.MapTileIndex.getTileIndex(t.z, t.x, t.y)) }; index.remove(t.key) }
+        writeTileIndex(index); _tiles.value = index
+    }
+
+    /** 保存期間を過ぎたタイルを整理する。 */
+    suspend fun pruneTiles(retentionDays: Int): Int = withContext(Dispatchers.IO) {
+        val cutoff = System.currentTimeMillis() - retentionDays * 86_400_000L
+        val index = _tiles.value.toMutableMap(); val old = index.values.filter { it.savedAt < cutoff }
+        old.forEach { t -> runCatching { tileWriter.remove(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK, org.osmdroid.util.MapTileIndex.getTileIndex(t.z, t.x, t.y)) }; index.remove(t.key) }
+        writeTileIndex(index); _tiles.value = index; old.size
+    }
+
+    suspend fun clearTiles() = withContext(Dispatchers.IO) {
+        _tiles.value.values.forEach { t -> runCatching { tileWriter.remove(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK, org.osmdroid.util.MapTileIndex.getTileIndex(t.z, t.x, t.y)) } }
+        writeTileIndex(emptyMap()); _tiles.value = emptyMap()
+    }
+
+    /** 端末に保存している量（Web の localUsage と同じ区分）。 */
+    data class Usage(val records: Int, val recordBytes: Long, val photos: Int, val photoBytes: Long, val parts: Int, val partBytes: Long, val tiles: Int, val tileBytes: Long) { val total get() = recordBytes + photoBytes + partBytes + tileBytes }
+    fun usage(): Usage = Usage(_records.value.size, recordsFile.length(), photoDir.listFiles()?.size ?: 0, photoBytesTotal(), _parts.value.size, partsDir.listFiles()?.sumOf { it.length() } ?: 0,
+        _tiles.value.size, _tiles.value.values.sumOf { it.bytes })
+
+    /** 種類ごとの削除（Web の clearCategory）。 */
+    suspend fun clearCategory(category: String) = withContext(Dispatchers.IO) {
+        when (category) {
+            "parts" -> { partsDir.listFiles()?.forEach { it.delete() }; _parts.value = emptyList() }
+            "tiles" -> clearTiles()
+            "areas" -> { writeList(areasFile, emptyList()); _areas.value = emptyList() }
+            "synced" -> mutate { list -> list.removeAll { it.str("syncState") == SYNC.synced } }
+        }
     }
 
     /** バックアップ（端末の記録をそのまま JSON にする）。 */

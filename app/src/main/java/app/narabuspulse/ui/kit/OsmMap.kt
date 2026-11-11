@@ -60,11 +60,7 @@ fun OsmMap(
 ) {
     val context = LocalContext.current
     val map = remember {
-        Configuration.getInstance().apply {
-            userAgentValue = context.packageName
-            osmdroidBasePath = context.cacheDir.resolve("osm")
-            osmdroidTileCache = context.cacheDir.resolve("osm/tiles")
-        }
+        OsmConfig.ensure(context)
         MapView(context).apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
@@ -156,3 +152,25 @@ private fun dotDrawable(color: Int, sizePx: Int) = GradientDrawable().apply {
 
 /** 地図の下に出す出典表示（OSM の利用条件）。 */
 const val OSM_ATTRIBUTION = "© OpenStreetMap contributors"
+
+/**
+ * osmdroid の共通設定。地図タイルは端末の永続領域に置き（オフライン保存したタイルを消さない）、
+ * 容量の上限を超えたら古いものから整理する。
+ */
+object OsmConfig {
+    @Volatile private var done = false
+    fun ensure(context: android.content.Context) {
+        if (done) return
+        synchronized(this) {
+            if (done) return
+            Configuration.getInstance().apply {
+                userAgentValue = context.packageName
+                osmdroidBasePath = context.filesDir.resolve("osm")
+                osmdroidTileCache = context.filesDir.resolve("osm/tiles")
+                tileFileSystemCacheMaxBytes = 300L * 1024 * 1024
+                tileFileSystemCacheTrimBytes = 240L * 1024 * 1024
+            }
+            done = true
+        }
+    }
+}
