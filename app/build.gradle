@@ -1,20 +1,20 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 android {
     namespace 'app.narabuspulse'
-    compileSdk 36
+    compileSdk 37
 
     defaultConfig {
         applicationId 'app.narabuspulse'
         minSdk 26
-        targetSdk 36
+        targetSdk 37
         versionCode 10
         versionName '3.0.0'
+        buildConfigField 'String', 'BASE_URL', '"https://nara-bus-pulse.base44.app"'
     }
 
     // 署名鍵は環境変数で渡す（README 参照）。未設定ならデバッグ鍵。
@@ -31,6 +31,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            // 開発用：DEV_BASE_URL で接続先を公開前のプレビューに切り替えられる（リリース版は常に本番）
+            def devBase = System.getenv('DEV_BASE_URL')
+            if (devBase) buildConfigField 'String', 'BASE_URL', "\"${devBase}\""
+        }
         release {
             minifyEnabled false
             signingConfig ks ? signingConfigs.release : signingConfigs.debug
@@ -48,15 +53,8 @@ android {
     }
 }
 
-kotlin {
-    jvmToolchain(21)
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-    }
-}
-
 dependencies {
-    def composeBom = platform('androidx.compose:compose-bom:2025.10.01')
+    def composeBom = platform('androidx.compose:compose-bom:2026.08.00')
     implementation composeBom
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.foundation:foundation'
@@ -66,15 +64,24 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
 
     implementation 'androidx.core:core-ktx:1.17.0'
-    implementation 'androidx.activity:activity-compose:1.11.0'
-    implementation 'androidx.navigation:navigation-compose:2.9.5'
-    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.9.4'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4'
+    implementation 'androidx.activity:activity-compose:1.12.4'
+    implementation 'androidx.navigation:navigation-compose:2.10.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0'
     implementation 'androidx.browser:browser:1.9.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
-    implementation 'io.coil-kt.coil3:coil-compose:3.3.0'
-    implementation 'io.coil-kt.coil3:coil-network-okhttp:3.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.5.0'
+    implementation 'io.coil-kt.coil3:coil-compose:3.6.2'
+    implementation 'io.coil-kt.coil3:coil-network-okhttp:3.6.2'
+    implementation 'io.github.dokar3:quickjs-kt-android:1.0.17'
 }
+
+// 開発用：環境変数 DEV_PROXY_CA に証明書ファイルがあれば、デバッグ版にだけ組み込む（リポジトリには含めない）。
+// 無ければ空のファイルになり、何も追加で信頼しない。
+def devProxyRes = layout.buildDirectory.dir('generated/devProxyRes').get().asFile
+def devProxyCa = System.getenv('DEV_PROXY_CA')
+new File(devProxyRes, 'raw').mkdirs()
+new File(devProxyRes, 'raw/dev_proxy_ca.pem').bytes = (devProxyCa && file(devProxyCa).exists()) ? file(devProxyCa).bytes : new byte[0]
+android.sourceSets.debug.res.srcDirs += devProxyRes

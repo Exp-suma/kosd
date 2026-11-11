@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- デバッグ版のみ：開発用プロキシの証明書（dev_proxy_ca）と端末のユーザー証明書を信頼する。 -->
+<network-security-config>
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+            <certificates src="@raw/dev_proxy_ca" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

@@ -7,5 +7,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Session.init(this)
+        app.narabuspulse.core.Logic.init(this)
     }
 }

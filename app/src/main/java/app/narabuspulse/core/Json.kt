@@ -97,3 +97,6 @@ fun toJson(v: Any?): JsonElement = when (v) {
     is Array<*> -> JsonArray(v.map { toJson(it) })
     else -> JsonPrimitive(v.toString())
 }
+
+/** 文字列・数値の要素をそのまま文字列にする（配列の中身など）。 */
+val JsonElement?.text: String get() = (this as? JsonPrimitive)?.takeIf { it !is JsonNull }?.content.orEmpty()

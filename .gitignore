@@ -7,3 +7,5 @@ local.properties
 *.keystore
 *.jks
 *.apk
+tools/logic-bundle/node_modules/
+app/src/main/assets/.logic-entry.mjs
