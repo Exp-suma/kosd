@@ -32,6 +32,7 @@ forecast/plan-weights
 forecast/weights
 gas/functions
 glue/stops
+glue/transit
 meter/analyze
 meter/ev
 meter/measure

@@ -39,6 +39,7 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("nara/stops/{code}") { a -> app.narabuspulse.feature.nara.NaraStopDetailScreen(a["code"].orEmpty()) }
     put("nara/timetable") { a -> app.narabuspulse.feature.nara.NaraTimetableScreen(a) }
     put("nara/data") { _ -> app.narabuspulse.feature.nara.NaraDataScreen() }
+    put("transit") { a -> app.narabuspulse.feature.transit.TransitScreen(a) }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }
