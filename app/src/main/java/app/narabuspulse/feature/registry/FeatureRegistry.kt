@@ -56,6 +56,8 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("vehicle-ai") { _ -> app.narabuspulse.feature.board.VehicleAiScreen() }
     put("sightings") { _ -> app.narabuspulse.feature.board.SightingsScreen() }
     put("admin/board") { _ -> app.narabuspulse.feature.board.AdminBoardScreen() }
+    put("vehicle-catalog") { _ -> app.narabuspulse.feature.catalog.VehicleCatalogScreen() }
+    put("vehicle-catalog/{fleetNumber}") { a -> app.narabuspulse.feature.catalog.CatalogDetailScreen(a["fleetNumber"].orEmpty()) }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }

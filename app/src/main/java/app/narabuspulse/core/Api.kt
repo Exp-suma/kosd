@@ -169,6 +169,10 @@ object Api {
         return res.str("file_uri") ?: throw ApiException(500, "アップロードに失敗しました")
     }
 
+    /** 非公開ファイルの一時URL（SDK の integrations.Core.CreateFileSignedUrl と同じ）。 */
+    suspend fun signedUrl(fileUri: String): String =
+        call(post("${Config.apiBase}/integration-endpoints/Core/CreateFileSignedUrl", JsonObject(mapOf("file_uri" to toJson(fileUri))))).str("signed_url").orEmpty()
+
     private fun post(url: String, data: JsonElement, auth: Boolean = true): Request =
         Request.Builder().url(url).post(jsonBody(data)).apply {
             if (!auth) tag(NoAuth::class.java, NoAuth)
