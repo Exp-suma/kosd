@@ -73,6 +73,13 @@ fun OsmMap(
             controller.setCenter(GeoPoint(center?.first ?: 34.6851, center?.second ?: 135.8048))
             minZoomLevel = 5.0
             maxZoomLevel = 19.0
+            // 一覧の中に置いたとき、地図の操作で一覧がスクロールしないようにする
+            setOnTouchListener { v, event ->
+                if (event.actionMasked == android.view.MotionEvent.ACTION_DOWN || event.actionMasked == android.view.MotionEvent.ACTION_MOVE) {
+                    v.parent?.requestDisallowInterceptTouchEvent(true)
+                }
+                false
+            }
         }
     }
     val state = remember { object { var lastFit: Any? = Unit; var lastCenter: Pair<Double, Double>? = null } }

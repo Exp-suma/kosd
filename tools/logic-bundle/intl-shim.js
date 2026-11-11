@@ -193,3 +193,25 @@
     g.URL.prototype.toJSON = function () { return this.href; };
   }
 })();
+
+/*
+ * localStorage / sessionStorage：アプリ側（Logic.kt の __host）に保存する。
+ * __host が無い環境（テスト）ではメモリだけに置く。
+ */
+(function () {
+  var g = globalThis;
+  function makeStorage(persist) {
+    var mem = {};
+    var host = function () { return persist && typeof g.__host !== "undefined" ? g.__host : null; };
+    return {
+      getItem: function (k) { k = String(k); var h = host(); if (h) { var v = h.storageGet(k); return v === undefined ? null : v; } return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+      setItem: function (k, v) { k = String(k); v = String(v); var h = host(); if (h) h.storageSet(k, v); else mem[k] = v; },
+      removeItem: function (k) { k = String(k); var h = host(); if (h) h.storageRemove(k); else delete mem[k]; },
+      clear: function () { mem = {}; },
+      key: function (i) { return Object.keys(mem)[i] || null; },
+      get length() { return Object.keys(mem).length; },
+    };
+  }
+  if (typeof g.localStorage === "undefined") g.localStorage = makeStorage(true);
+  if (typeof g.sessionStorage === "undefined") g.sessionStorage = makeStorage(false);
+})();

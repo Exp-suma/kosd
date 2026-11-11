@@ -8,5 +8,6 @@ class App : Application() {
         super.onCreate()
         Session.init(this)
         app.narabuspulse.core.Logic.init(this)
+        app.narabuspulse.core.Net.init(this)
     }
 }

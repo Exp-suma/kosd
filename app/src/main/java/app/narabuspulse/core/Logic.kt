@@ -2,6 +2,8 @@ package app.narabuspulse.core
 
 import android.content.Context
 import com.dokar.quickjs.QuickJs
+import com.dokar.quickjs.binding.FunctionBinding
+import com.dokar.quickjs.binding.define
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -25,6 +27,13 @@ object Logic {
     private suspend fun js(): QuickJs {
         engine?.let { return it }
         val q = QuickJs.create(Dispatchers.Default)
+        // Web の localStorage の代わり（logic.js 内の保存処理が使う）
+        val prefs = appContext.getSharedPreferences("logic_storage", Context.MODE_PRIVATE)
+        q.define("__host") {
+            function("storageGet", FunctionBinding<String?> { args -> prefs.getString(args.getOrNull(0)?.toString().orEmpty(), null) })
+            function("storageSet", FunctionBinding<Any?> { args -> prefs.edit().putString(args.getOrNull(0)?.toString().orEmpty(), args.getOrNull(1)?.toString()).apply(); null })
+            function("storageRemove", FunctionBinding<Any?> { args -> prefs.edit().remove(args.getOrNull(0)?.toString().orEmpty()).apply(); null })
+        }
         val code = appContext.assets.open("logic.js").bufferedReader().use { it.readText() }
         q.evaluate<Any?>(code, filename = "logic.js")
         engine = q

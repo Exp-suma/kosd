@@ -194,8 +194,9 @@ object BusRepository {
     val state: StateFlow<State> = _state
     private val mutex = Mutex()
 
-    const val INTERVAL_MS = 5 * 60_000L
-    var logDays: Int = 7
+    /** 自動更新の間隔（通信モードに合わせる） */
+    val INTERVAL_MS: Long get() = app.narabuspulse.core.Net.plan.value.intervalMs
+    val logDays: Int get() = app.narabuspulse.core.Net.plan.value.logDays
 
     suspend fun refresh(force: Boolean = false) {
         mutex.withLock {

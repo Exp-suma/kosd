@@ -133,7 +133,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `vehicle-notify/history` | 車両通知の履歴 | `vehicle-notify.history.jsx` |
 | ⬜ 未移植 | `vehicle-notify` | 車両通知 | `vehicle-notify.index.jsx` |
 | ⬜ 未移植 | `vehicle-notify/place` | 地点を指定した車両通知 | `vehicle-notify.place.jsx` |
-| ⬜ 未移植 | `vehicles` | 車両位置 | `vehicles.jsx` |
+| 🟨 移植済み（エミュレーターで表示確認） | `vehicles` | 車両位置 | `vehicles.jsx` |
 | ⬜ 未移植 | `weather/{code}` | 市町村別30日予報 | `weather.$code.jsx` |
 | ⬜ 未移植 | `weather/ai` | AI地域別気象解説 | `weather.ai.jsx` |
 | ⬜ 未移植 | `weather/compare` | 市町村の天気比較 | `weather.compare.jsx` |

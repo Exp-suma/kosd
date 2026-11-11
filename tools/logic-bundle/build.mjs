@@ -52,14 +52,19 @@ for (const file of candidates) {
     const usesExternal = imports.some((i) => i.external);
     const usesJsx = inputs.some((i) => i.endsWith(".jsx"));
     const text = r.outputFiles[0].text;
-    const touchesDom = /\b(window|document|localStorage|sessionStorage|navigator|indexedDB)\b/.test(text);
+    // localStorage / sessionStorage はアプリ側の保存領域で代用できる（Logic.kt）。それ以外のブラウザ機能は対象外
+    const touchesDom = /\b(window|document|navigator|indexedDB)\b/.test(text);
     if (!usesExternal && !usesJsx && !touchesDom) pure.push(file);
   } catch {
     /* 単体でまとめられないものは対象外 */
   }
 }
 
-const keyOf = (f) => path.relative(libDir, f).replace(/\.js$/, "").split(path.sep).join("/");
+// ネイティブ版用のつなぎ（tools/logic-bundle/glue/*.js）も "glue/<名前>" として入れる
+const glueDir = new URL("./glue/", import.meta.url).pathname;
+const glue = fs.existsSync(glueDir) ? fs.readdirSync(glueDir).filter((f) => f.endsWith(".js")).map((f) => path.join(glueDir, f)) : [];
+pure.push(...glue);
+const keyOf = (f) => f.startsWith(glueDir) ? "glue/" + path.basename(f, ".js") : path.relative(libDir, f).replace(/\.js$/, "").split(path.sep).join("/");
 const entry = [
   ...pure.map((f, i) => `import * as m${i} from ${JSON.stringify(f)};`),
   "const MODULES = {",
