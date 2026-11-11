@@ -40,6 +40,14 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("nara/timetable") { a -> app.narabuspulse.feature.nara.NaraTimetableScreen(a) }
     put("nara/data") { _ -> app.narabuspulse.feature.nara.NaraDataScreen() }
     put("transit") { a -> app.narabuspulse.feature.transit.TransitScreen(a) }
+    put("weather") { _ -> app.narabuspulse.feature.weather.WeatherListScreen() }
+    put("weather/{code}") { a -> app.narabuspulse.feature.weather.WeatherDetailScreen(a["code"].orEmpty()) }
+    put("weather/map") { _ -> app.narabuspulse.feature.weather.WeatherMapScreen() }
+    put("weather/compare") { _ -> app.narabuspulse.feature.weather.WeatherCompareScreen() }
+    put("weather/snow") { _ -> app.narabuspulse.feature.weather.WeatherSnowScreen() }
+    put("weather/elevation") { _ -> app.narabuspulse.feature.weather.WeatherElevationScreen() }
+    put("weather/similar") { _ -> app.narabuspulse.feature.weather.WeatherSimilarScreen() }
+    put("weather/ai") { _ -> app.narabuspulse.feature.weather.WeatherAiScreen() }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }
