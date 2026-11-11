@@ -6,6 +6,10 @@ import androidx.compose.runtime.Composable
 fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = buildMap {
     put("home") { _ -> app.narabuspulse.feature.home.HomeScreen() }
     put("dashboard") { _ -> app.narabuspulse.feature.home.DashboardScreen() }
+    put("calendar") { _ -> app.narabuspulse.feature.data.CalendarScreen() }
+    put("logs") { _ -> app.narabuspulse.feature.data.LogsScreen() }
+    put("analysis") { _ -> app.narabuspulse.feature.data.AnalysisScreen() }
+    put("operations") { _ -> app.narabuspulse.feature.data.OperationsScreen() }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }
