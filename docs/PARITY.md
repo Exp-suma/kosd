@@ -1,0 +1,149 @@
+# ネイティブ移植の進捗（Web 版との機能対応表）
+
+Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状況。
+
+| 状態 | ネイティブ route | 画面 | Web のファイル |
+| --- | --- | --- | --- |
+| ⬜ 未移植 | `admin/board` | 掲示板・車両情報の管理 | `admin.board.jsx` |
+| ⬜ 未移植 | `ai` | AIダッシュボード | `ai.jsx` |
+| ⬜ 未移植 | `ai-search` | AI自然言語検索 | `ai-search.jsx` |
+| ⬜ 未移植 | `all-vehicles` | 全車両マップ | `all-vehicles.jsx` |
+| ⬜ 未移植 | `analysis` | 時間帯別分析 | `analysis.jsx` |
+| ⬜ 未移植 | `analytics/continuity` | 運用の連続性 | `analytics.continuity.jsx` |
+| ⬜ 未移植 | `analytics/fleet` | 車両配置・稼働分析 | `analytics.fleet.jsx` |
+| ⬜ 未移植 | `analytics/headway` | 運行間隔分析 | `analytics.headway.jsx` |
+| ⬜ 未移植 | `analytics` | 運行分析 | `analytics.index.jsx` |
+| ⬜ 未移植 | `analytics/longterm` | 長期統計・ランキング | `analytics.longterm.jsx` |
+| ⬜ 未移植 | `analytics/transfers` | 運行接続・乗り継ぎ分析 | `analytics.transfers.jsx` |
+| ⬜ 未移植 | `analytics/vehicles` | 車両別 稼働グラフ | `analytics.vehicles.jsx` |
+| ⬜ 未移植 | `assistant/{conversationId}` | AIアシスタント | `assistant.$conversationId.jsx` |
+| ⬜ 未移植 | `assistant` | AIアシスタント | `assistant.index.jsx` |
+| ⬜ 未移植 | `automation` | 自動化ワークフロー | `automation.index.jsx` |
+| ⬜ 未移植 | `automation/monitor` | 取得監視・データ保全 | `automation.monitor.jsx` |
+| ⬜ 未移植 | `automation/reports` | 日報・週報・月報 | `automation.reports.jsx` |
+| ⬜ 未移植 | `board/{postId}` | 投稿 | `board.$postId.jsx` |
+| ⬜ 未移植 | `board` | みんなの掲示板 | `board.index.jsx` |
+| ⬜ 未移植 | `board/new` | 新規投稿 | `board.new.jsx` |
+| ⬜ 未移植 | `calendar` | 車両別稼働カレンダー | `calendar.jsx` |
+| ⬜ 未移植 | `camera` | カメラ統合コンソール | `camera.jsx` |
+| ⬜ 未移植 | `camera-bridge` | Androidブリッジ仕様 | `camera-bridge.jsx` |
+| ⬜ 未移植 | `collection` | データ収集 | `collection.jsx` |
+| ⬜ 未移植 | `compare` | お気に入り・車両比較 | `compare.jsx` |
+| ⬜ 未移植 | `dashboard` | パーソナルダッシュボード | `dashboard.jsx` |
+| ⬜ 未移植 | `discover` | 撮影地新規開拓AI | `discover.index.jsx` |
+| ⬜ 未移植 | `discover/saved` | 保存した撮影候補 | `discover.saved.jsx` |
+| ⬜ 未移植 | `expedition/{planId}` | 遠征計画 | `expedition.$planId.jsx` |
+| ⬜ 未移植 | `expedition` | 遠征プランナー | `expedition.index.jsx` |
+| ⬜ 未移植 | `expert/{conversationId}` | 相談AI | `expert.$conversationId.jsx` |
+| ⬜ 未移植 | `expert` | 奈良交通・バスロケ総合相談AI | `expert.index.jsx` |
+| ⬜ 未移植 | `field/conflicts` | 同期競合 | `field.conflicts.jsx` |
+| ⬜ 未移植 | `field/data` | 保存済みデータ | `field.data.jsx` |
+| ⬜ 未移植 | `field` | 現地モード | `field.index.jsx` |
+| ⬜ 未移植 | `field/map` | 保存済み地図 | `field.map.jsx` |
+| ⬜ 未移植 | `field/records` | 現地記録 | `field.records.jsx` |
+| ⬜ 未移植 | `fleet/{carCode}` | 車両詳細 | `fleet.$carCode.jsx` |
+| ⬜ 未移植 | `fleet/favorites` | お気に入り車両 | `fleet.favorites.jsx` |
+| ⬜ 未移植 | `fleet` | 車番検索 | `fleet.index.jsx` |
+| ⬜ 未移植 | `fleet/logs` | 全車両ログ | `fleet.logs.jsx` |
+| ⬜ 未移植 | `forecast/accuracy` | 予測精度分析 | `forecast.accuracy.jsx` |
+| ⬜ 未移植 | `forecast/history` | 予測履歴 | `forecast.history.jsx` |
+| ⬜ 未移植 | `forecast` | 1日運用予測 | `forecast.index.jsx` |
+| ⬜ 未移植 | `forecast/plan` | 1日運用予測（運用表優先） | `forecast.plan.jsx` |
+| ⬜ 未移植 | `forecast/verify` | 運用表で予測を検証 | `forecast.verify.jsx` |
+| ⬜ 未移植 | `home` | ホーム | `index.jsx` |
+| ⬜ 未移植 | `install` | ホーム画面に追加 | `install.jsx` |
+| ⬜ 未移植 | `logs` | 運行変更履歴 | `logs.jsx` |
+| ⬜ 未移植 | `meter/calibration` | 露出計 | `meter.calibration.jsx` |
+| ⬜ 未移植 | `meter/cameras` | 露出計 | `meter.cameras.jsx` |
+| ⬜ 未移植 | `meter/combos` | 露出計 | `meter.combos.jsx` |
+| ⬜ 未移植 | `meter/history` | 露出計 | `meter.history.jsx` |
+| ⬜ 未移植 | `meter` | 露出計 | `meter.index.jsx` |
+| ⬜ 未移植 | `meter/lenses` | 露出計 | `meter.lenses.jsx` |
+| ⬜ 未移植 | `meter/presets` | 露出計 | `meter.presets.jsx` |
+| ⬜ 未移植 | `nara/data` | 奈良交通データ・診断 | `nara.data.jsx` |
+| ⬜ 未移植 | `nara` | 奈良交通 経路検索 | `nara.index.jsx` |
+| ⬜ 未移植 | `nara/stops/{code}` | 停留所の詳細 | `nara.stops.$code.jsx` |
+| ⬜ 未移植 | `nara/stops` | 奈良交通 停留所検索 | `nara.stops.index.jsx` |
+| ⬜ 未移植 | `nara/timetable` | 奈良交通 区間時刻表 | `nara.timetable.jsx` |
+| ⬜ 未移植 | `notifications` | 通知 | `notifications.jsx` |
+| ⬜ 未移植 | `occlusion/compare` | 撮影角度・画角の比較 | `occlusion.compare.jsx` |
+| ⬜ 未移植 | `occlusion/data` | 交通量データ | `occlusion.data.jsx` |
+| ⬜ 未移植 | `occlusion/hourly` | 時間帯別の被り率 | `occlusion.hourly.jsx` |
+| ⬜ 未移植 | `occlusion` | AI撮影環境・被り率解析 | `occlusion.index.jsx` |
+| ⬜ 未移植 | `occlusion/ranking` | 撮影地点ランキング | `occlusion.ranking.jsx` |
+| ⬜ 未移植 | `occlusion/verify` | 予測と実績の検証 | `occlusion.verify.jsx` |
+| ⬜ 未移植 | `operations` | 運用表 | `operations.jsx` |
+| ⬜ 未移植 | `outing/battery` | 充電・バッテリー管理 | `outing.battery.jsx` |
+| ⬜ 未移植 | `outing/gear` | 持ち物管理 | `outing.gear.jsx` |
+| ⬜ 未移植 | `outing` | 外出アシスタント | `outing.index.jsx` |
+| ⬜ 未移植 | `outing/navi` | AI経路検索 | `outing.navi.jsx` |
+| ⬜ 未移植 | `outing/plans/{tripId}` | 外出予定の詳細 | `outing.plans.$tripId.jsx` |
+| ⬜ 未移植 | `outing/plans` | 外出予定 | `outing.plans.index.jsx` |
+| ⬜ 未移植 | `photos/{photoId}` | 撮影記録の詳細 | `photos.$photoId.jsx` |
+| ⬜ 未移植 | `photos` | 撮影データベース | `photos.index.jsx` |
+| ⬜ 未移植 | `photos/learning` | 撮影設定の学習・地点実績 | `photos.learning.jsx` |
+| ⬜ 未移植 | `predict/accuracy` | 予測精度・履歴 | `predict.accuracy.jsx` |
+| ⬜ 未移植 | `predict/intersection` | 交差点通過予測AI | `predict.intersection.jsx` |
+| ⬜ 未移植 | `predict/next` | 次運用予測 | `predict.next.jsx` |
+| ⬜ 未移植 | `predict/report` | 車両運行レポート | `predict.report.jsx` |
+| ⬜ 未移植 | `predict/watch` | 車両出現通知 | `predict.watch.jsx` |
+| ⬜ 未移植 | `profile` | マイページ | `profile.jsx` |
+| ⬜ 未移植 | `radar` | 気象レーダー | `radar.jsx` |
+| ⬜ 未移植 | `research/diff` | 運用表の差分比較 | `research.diff.jsx` |
+| ⬜ 未移植 | `research` | 運用調査データセンター | `research.index.jsx` |
+| ⬜ 未移植 | `research/routes` | 系統別充当車両 | `research.routes.jsx` |
+| ⬜ 未移植 | `research/vehicles` | 車両別運用履歴 | `research.vehicles.jsx` |
+| ⬜ 未移植 | `rides/history` | 乗車履歴 | `rides.history.jsx` |
+| ⬜ 未移植 | `rides/plans` | 乗車予定 | `rides.plans.jsx` |
+| ⬜ 未移植 | `search` | 自由条件検索 | `search.jsx` |
+| ⬜ 未移植 | `services` | 外部サービス接続 | `services.index.jsx` |
+| ⬜ 未移植 | `services/lodging` | 宿泊検索 | `services.lodging.jsx` |
+| ⬜ 未移植 | `services/transit` | 経路検索 | `services.transit.jsx` |
+| ⬜ 未移植 | `services/x` | X投稿検索 | `services.x.jsx` |
+| ⬜ 未移植 | `settings/advanced` | 詳細設定 | `settings.advanced.jsx` |
+| ⬜ 未移植 | `settings/data` | データ管理センター | `settings.data.jsx` |
+| ⬜ 未移植 | `settings` | 基本設定 | `settings.index.jsx` |
+| ⬜ 未移植 | `settings/monitor` | システム状態モニター | `settings.monitor.jsx` |
+| ⬜ 未移植 | `settings/notify` | 通知の設定 | `settings.notify.jsx` |
+| ⬜ 未移植 | `settings/offline` | オフライン現地活動モード | `settings.offline.jsx` |
+| ⬜ 未移植 | `settings/performance` | パフォーマンス設定 | `settings.performance.jsx` |
+| ⬜ 未移植 | `shoot/chances` | 撮影チャンス | `shoot.chances.jsx` |
+| ⬜ 未移植 | `shoot/environment` | 撮影環境予測 | `shoot.environment.jsx` |
+| ⬜ 未移植 | `shoot/favorites` | お気に入り撮影地点 | `shoot.favorites.jsx` |
+| ⬜ 未移植 | `shoot/light` | 光線シミュレーション | `shoot.light.jsx` |
+| ⬜ 未移植 | `shoot/spots` | 撮影スポット検索 | `shoot.spots.jsx` |
+| ⬜ 未移植 | `shoot/times` | おすすめ撮影時間 | `shoot.times.jsx` |
+| ⬜ 未移植 | `sightings` | 目撃情報マップ | `sightings.jsx` |
+| ⬜ 未移植 | `sim3d` | AI撮影環境3Dシミュレーター | `sim3d.index.jsx` |
+| ⬜ 未移植 | `sim3d/saved` | 保存したシミュレーション | `sim3d.saved.jsx` |
+| ⬜ 未移植 | `status` | 車両状態一覧 | `status.jsx` |
+| ⬜ 未移植 | `terrain/{routeName}` | 路線地形 | `terrain.$routeName.jsx` |
+| ⬜ 未移植 | `terrain/ai` | AI地形分析 | `terrain.ai.jsx` |
+| ⬜ 未移植 | `terrain/compare` | 路線比較 | `terrain.compare.jsx` |
+| ⬜ 未移植 | `terrain/hazards` | 狭隘・難所マップ | `terrain.hazards.jsx` |
+| ⬜ 未移植 | `terrain` | 路線地形分析 | `terrain.index.jsx` |
+| ⬜ 未移植 | `timetable/favorites` | 保存した交差点 | `timetable.favorites.jsx` |
+| ⬜ 未移植 | `timetable` | 交差点別バス時刻表 | `timetable.index.jsx` |
+| ⬜ 未移植 | `transit` | 総合経路検索（奈良交通＋鉄道） | `transit.jsx` |
+| ⬜ 未移植 | `vehicle-ai` | 車両情報AI | `vehicle-ai.jsx` |
+| ⬜ 未移植 | `vehicle-catalog/{fleetNumber}` | 車両詳細 | `vehicle-catalog.$fleetNumber.jsx` |
+| ⬜ 未移植 | `vehicle-catalog` | 車両図鑑 | `vehicle-catalog.index.jsx` |
+| ⬜ 未移植 | `vehicle-db/{vehicleNumber}` | 車両詳細 | `vehicle-db.$vehicleNumber.jsx` |
+| ⬜ 未移植 | `vehicle-db` | 車両データベース | `vehicle-db.index.jsx` |
+| ⬜ 未移植 | `vehicle-notify/history` | 車両通知の履歴 | `vehicle-notify.history.jsx` |
+| ⬜ 未移植 | `vehicle-notify` | 車両通知 | `vehicle-notify.index.jsx` |
+| ⬜ 未移植 | `vehicle-notify/place` | 地点を指定した車両通知 | `vehicle-notify.place.jsx` |
+| ⬜ 未移植 | `vehicles` | 車両位置 | `vehicles.jsx` |
+| ⬜ 未移植 | `weather/{code}` | 市町村別30日予報 | `weather.$code.jsx` |
+| ⬜ 未移植 | `weather/ai` | AI地域別気象解説 | `weather.ai.jsx` |
+| ⬜ 未移植 | `weather/compare` | 市町村の天気比較 | `weather.compare.jsx` |
+| ⬜ 未移植 | `weather/elevation` | 標高別気象・積雪残存 | `weather.elevation.jsx` |
+| ⬜ 未移植 | `weather` | 奈良県 市町村別の天気 | `weather.index.jsx` |
+| ⬜ 未移植 | `weather/map` | 奈良県 天気マップ | `weather.map.jsx` |
+| ⬜ 未移植 | `weather/similar` | 過去の類似気象日 | `weather.similar.jsx` |
+| ⬜ 未移植 | `weather/snow` | 降雪・積雪分析 | `weather.snow.jsx` |
+| ⬜ 未移植 | `wifi/history` | 転送履歴・検証 | `wifi.history.jsx` |
+| ⬜ 未移植 | `wifi` | Wi-Fi画像転送 | `wifi.index.jsx` |
+| ⬜ 未移植 | `wifi/setup` | ブリッジ設定・対応表 | `wifi.setup.jsx` |
+
+凡例: ⬜ 未移植 / 🟨 移植済み（未検証） / ✅ 実機・エミュレーターで動作確認済み
