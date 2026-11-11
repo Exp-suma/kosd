@@ -50,7 +50,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `forecast` | 1日運用予測 | `forecast.index.jsx` |
 | ⬜ 未移植 | `forecast/plan` | 1日運用予測（運用表優先） | `forecast.plan.jsx` |
 | ⬜ 未移植 | `forecast/verify` | 運用表で予測を検証 | `forecast.verify.jsx` |
-| ⬜ 未移植 | `home` | ホーム | `index.jsx` |
+| 🟨 移植済み（エミュレーターで表示確認） | `home` | ホーム | `index.jsx` |
 | ⬜ 未移植 | `install` | ホーム画面に追加 | `install.jsx` |
 | ⬜ 未移植 | `logs` | 運行変更履歴 | `logs.jsx` |
 | ⬜ 未移植 | `meter/calibration` | 露出計 | `meter.calibration.jsx` |

@@ -25,11 +25,11 @@ import java.io.IOException
 /** 画面全体で使うスナックバー（操作結果の通知）。 */
 val LocalSnackbar = compositionLocalOf { SnackbarHostState() }
 
-fun Throwable.userMessage(): String = when (this) {
-    is ApiException -> message ?: "エラーが発生しました"
+fun Throwable.userMessage(): String = also { android.util.Log.w("NaraBus", "error", it) }.let { e -> when (e) {
+    is ApiException -> e.message ?: "エラーが発生しました"
     is IOException -> "通信できませんでした。電波状況を確認してください。"
-    else -> message ?: "エラーが発生しました"
-}
+    else -> e.message ?: "エラーが発生しました"
+} }
 
 @Stable
 class LoadState<T> internal constructor() {

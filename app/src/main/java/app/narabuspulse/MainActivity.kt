@@ -15,6 +15,7 @@ import app.narabuspulse.core.Api
 import app.narabuspulse.core.Session
 import app.narabuspulse.feature.auth.AuthFlow
 import app.narabuspulse.nav.AppShell
+import app.narabuspulse.nav.DevRoute
 import app.narabuspulse.ui.theme.NaraTheme
 import kotlinx.coroutines.launch
 
@@ -50,6 +51,13 @@ class MainActivity : ComponentActivity() {
 
     /** narabuspulse://auth#access_token=… （Google などのログインからの戻り） */
     private fun handleIntent(intent: Intent?) {
+        // 開発用（デバッグ版のみ）：adb から --es dev_token <token> でログイン状態にする
+        if (BuildConfig.DEBUG) intent?.getStringExtra("dev_token")?.takeIf { it.isNotBlank() }?.let { t ->
+            Session.setToken(t)
+            lifecycleScope.launch { runCatching { Session.setUser(Api.me()) } }
+        }
+        // 開発用（デバッグ版のみ）：--es dev_route /board などで画面を開く
+        if (BuildConfig.DEBUG) intent?.getStringExtra("dev_route")?.let { DevRoute.pending = it }
         val data = intent?.data ?: return
         if (data.scheme != "narabuspulse" || data.host != "auth") return
         val params = (data.fragment ?: data.query ?: "").split('&').associate {

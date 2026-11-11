@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -98,6 +99,11 @@ fun AppShell(onLogout: () -> Unit) {
     val screen = SCREENS.firstOrNull { it.route == entry?.destination?.route }
     val isTop = entry?.destination?.route == "home" || NAV_GROUPS.any { g -> g.items.any { webPathToRoute(it.path) == entry?.destination?.route } }
 
+    val devRoute = DevRoute.pending
+    androidx.compose.runtime.LaunchedEffect(devRoute) {
+        if (devRoute != null) { nav.go(devRoute); DevRoute.pending = null }
+    }
+
     CompositionLocalProvider(LocalSnackbar provides snackbar, LocalNav provides nav) {
         ModalNavigationDrawer(
             drawerState = drawer,
@@ -143,6 +149,11 @@ fun AppShell(onLogout: () -> Unit) {
 }
 
 val LocalNav = androidx.compose.runtime.staticCompositionLocalOf<Nav> { error("Nav が未設定です") }
+
+/** 開発用：adb から開く画面を指定する（デバッグ版のみ MainActivity が設定）。 */
+object DevRoute {
+    var pending by androidx.compose.runtime.mutableStateOf<String?>(null)
+}
 
 @Composable
 private fun DrawerContent(path: String, onSelect: (NavItem) -> Unit, onLogout: () -> Unit) {

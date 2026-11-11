@@ -35,14 +35,29 @@ object Logic {
 
     /** 関数を呼ぶ。args は関数の引数を順に並べたもの。 */
     suspend fun call(module: String, fn: String, vararg args: Any?): JsonElement = mutex.withLock {
-        val argsJson = JsonArray(args.map { toJson(it) }).toString()
-        val out = js().evaluate<String>("__logic.callJson(${lit(module)}, ${lit(fn)}, ${lit(argsJson)})")
-        if (out.isBlank()) JsonNull else Json.parse(out)
+        try {
+            val argsJson = JsonArray(args.map { toJson(it) }).toString()
+            val out = js().evaluate<String>("__logic.callJson(${lit(module)}, ${lit(fn)}, ${lit(argsJson)})")
+            if (out.isBlank()) JsonNull else Json.parse(out)
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            // 計算処理の失敗で画面ごと落とさない（その部分だけ表示されなくなる）
+            android.util.Log.e("NaraBus", "logic $module#$fn failed", e)
+            JsonNull
+        }
     }
 
     /** 定数（例: weather/municipalities の MUNICIPALITIES）を取り出す。 */
     suspend fun constant(module: String, name: String): JsonElement = mutex.withLock {
-        val out = js().evaluate<String>("__logic.constJson(${lit(module)}, ${lit(name)})")
-        if (out.isBlank()) JsonNull else Json.parse(out)
+        try {
+            val out = js().evaluate<String>("__logic.constJson(${lit(module)}, ${lit(name)})")
+            if (out.isBlank()) JsonNull else Json.parse(out)
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            android.util.Log.e("NaraBus", "logic constant $module#$name failed", e)
+            JsonNull
+        }
     }
 }
