@@ -160,6 +160,15 @@ object Api {
         return res.str("file_url") ?: res.str("url") ?: throw ApiException(500, "アップロードに失敗しました")
     }
 
+    /** 非公開ファイルとしてアップロードして file_uri を返す（SDK の integrations.Core.UploadPrivateFile と同じ）。 */
+    suspend fun uploadPrivateFile(fileName: String, mime: String, bytes: ByteArray): String {
+        val body = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("file", fileName, bytes.toRequestBody(mime.toMediaType()))
+            .build()
+        val res = call(Request.Builder().url("${Config.apiBase}/integration-endpoints/Core/UploadPrivateFile").post(body).build())
+        return res.str("file_uri") ?: throw ApiException(500, "アップロードに失敗しました")
+    }
+
     private fun post(url: String, data: JsonElement, auth: Boolean = true): Request =
         Request.Builder().url(url).post(jsonBody(data)).apply {
             if (!auth) tag(NoAuth::class.java, NoAuth)
