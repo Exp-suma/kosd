@@ -33,6 +33,7 @@ forecast/weights
 gas/functions
 glue/journey
 glue/shoot
+glue/sim3d
 glue/stops
 glue/transit
 meter/analyze
