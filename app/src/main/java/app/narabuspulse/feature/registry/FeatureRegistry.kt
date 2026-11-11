@@ -63,6 +63,7 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("settings/offline") { _ -> app.narabuspulse.feature.field.OfflineSettingsScreen() }
     put("field") { _ -> app.narabuspulse.feature.field.FieldHomeScreen() }
     put("outing") { _ -> app.narabuspulse.feature.outing.OutingDashboardScreen() }
+    put("radar") { _ -> app.narabuspulse.feature.radar.RadarScreen() }
     put("occlusion") { _ -> app.narabuspulse.feature.occlusion.OcclusionScreen() }
     put("occlusion/hourly") { _ -> app.narabuspulse.feature.occlusion.OcclusionHourlyScreen() }
     put("occlusion/compare") { _ -> app.narabuspulse.feature.occlusion.OcclusionCompareScreen() }

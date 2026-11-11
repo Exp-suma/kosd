@@ -36,6 +36,9 @@ data class MapPin(
     val label: String? = null,
 )
 
+/** 地図に重ねる画像タイル（気象レーダーなど）。url は {z}/{x}/{y} を含む。 */
+data class MapTiles(val id: String, val url: String, val alpha: Float = 1f, val maxNativeZoom: Int = 10, val minZoom: Int = 4)
+
 /** 地図上の線（経路など）。 */
 data class MapLine(val points: List<Pair<Double, Double>>, val color: Color = Color(0xFF2F6FB0), val width: Float = 6f, val dashed: Boolean = false)
 
@@ -52,6 +55,7 @@ fun OsmMap(
     pins: List<MapPin> = emptyList(),
     lines: List<MapLine> = emptyList(),
     circles: List<MapCircle> = emptyList(),
+    tiles: List<MapTiles> = emptyList(),
     center: Pair<Double, Double>? = null,
     zoom: Double = 13.0,
     fitKey: Any? = null,
@@ -79,14 +83,34 @@ fun OsmMap(
         }
     }
     val state = remember { object { var lastFit: Any? = Unit; var lastCenter: Pair<Double, Double>? = null } }
+    val tileProviders = remember { HashMap<String, org.osmdroid.tileprovider.MapTileProviderBasic>() }
 
     DisposableEffect(Unit) {
         map.onResume()
-        onDispose { map.onPause(); map.onDetach() }
+        onDispose { tileProviders.values.forEach { runCatching { it.detach() } }; tileProviders.clear(); map.onPause(); map.onDetach() }
     }
 
     AndroidView(factory = { map }, modifier = modifier, update = { mv ->
         mv.overlays.clear()
+        // 重ねるタイル（使わなくなったものは解放する）
+        tileProviders.keys.filter { k -> tiles.none { it.url == k } }.forEach { k -> runCatching { tileProviders.remove(k)?.detach() } }
+        tiles.forEach { t ->
+            val provider = tileProviders.getOrPut(t.url) {
+                val ext = if (t.url.substringBefore('?').endsWith(".jpg")) ".jpg" else ".png"
+                val source = object : org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase("${t.id}-${t.url.hashCode()}", t.minZoom, t.maxNativeZoom, 256, ext, arrayOf("")) {
+                    override fun getTileURLString(index: Long): String = t.url
+                        .replace("{z}", org.osmdroid.util.MapTileIndex.getZoom(index).toString())
+                        .replace("{x}", org.osmdroid.util.MapTileIndex.getX(index).toString())
+                        .replace("{y}", org.osmdroid.util.MapTileIndex.getY(index).toString())
+                }
+                org.osmdroid.tileprovider.MapTileProviderBasic(context.applicationContext, source).also { it.setTileRequestCompleteHandler(mv.tileRequestCompleteHandler) }
+            }
+            mv.overlays.add(org.osmdroid.views.overlay.TilesOverlay(provider, context).apply {
+                loadingBackgroundColor = AColor.TRANSPARENT
+                loadingLineColor = AColor.TRANSPARENT
+                setColorFilter(android.graphics.ColorMatrixColorFilter(android.graphics.ColorMatrix().apply { setScale(1f, 1f, 1f, t.alpha.coerceIn(0f, 1f)) }))
+            })
+        }
         if (onMapClick != null) {
             mv.overlays.add(object : org.osmdroid.views.overlay.Overlay() {
                 override fun onSingleTapConfirmed(e: android.view.MotionEvent, mapView: MapView): Boolean {
@@ -122,7 +146,7 @@ fun OsmMap(
                 title = p.title
                 snippet = p.snippet
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                icon = dotDrawable(p.color.toArgb(), (p.size.value * density).toInt())
+                icon = dotDrawable(p.color.toArgb(), (p.size.value * density).toInt(), p.label)
                 if (onPinClick != null) setOnMarkerClickListener { m, _ -> onPinClick(p); m.showInfoWindow(); true }
             })
         }
@@ -143,11 +167,27 @@ fun OsmMap(
     })
 }
 
-private fun dotDrawable(color: Int, sizePx: Int) = GradientDrawable().apply {
-    shape = GradientDrawable.OVAL
-    setColor(color)
-    setStroke(maxOf(2, sizePx / 6), AColor.WHITE)
-    setSize(sizePx, sizePx)
+private fun dotDrawable(color: Int, sizePx: Int, label: String? = null): android.graphics.drawable.Drawable {
+    val dot = GradientDrawable().apply {
+        shape = GradientDrawable.OVAL
+        setColor(color)
+        setStroke(maxOf(2, sizePx / 6), AColor.WHITE)
+        setSize(sizePx, sizePx)
+    }
+    if (label.isNullOrBlank()) return dot
+    // 数字・記号を印の中に描く（スコアや区分の表示）
+    return object : android.graphics.drawable.Drawable() {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = AColor.WHITE; textAlign = Paint.Align.CENTER; isFakeBoldText = true; textSize = sizePx * (if (label.length >= 3) 0.42f else 0.52f) }
+        override fun draw(canvas: android.graphics.Canvas) {
+            dot.bounds = bounds; dot.draw(canvas)
+            canvas.drawText(label, bounds.exactCenterX(), bounds.exactCenterY() - (paint.descent() + paint.ascent()) / 2, paint)
+        }
+        override fun setAlpha(alpha: Int) { dot.alpha = alpha }
+        override fun setColorFilter(filter: android.graphics.ColorFilter?) { dot.colorFilter = filter }
+        @Deprecated("Deprecated in Java") override fun getOpacity() = android.graphics.PixelFormat.TRANSLUCENT
+        override fun getIntrinsicWidth() = sizePx
+        override fun getIntrinsicHeight() = sizePx
+    }
 }
 
 /** 地図の下に出す出典表示（OSM の利用条件）。 */
