@@ -4,17 +4,18 @@ plugins {
 
 android {
     namespace 'app.narabuspulse'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId 'app.narabuspulse'
         minSdk 24
-        targetSdk 34
-        versionCode 2
-        versionName '1.1'
+        targetSdk 36
+        versionCode 3
+        versionName '2.0'
     }
 
-    // GitHub Actions などで環境変数から署名鍵を渡す（未設定ならデバッグ鍵で署名）
+    // 署名鍵は環境変数で渡す（README 参照）。
+    // TWA を全画面表示にするには、この鍵の SHA-256 をサイトの assetlinks.json に登録する必要がある。
     def ks = System.getenv('KEYSTORE_FILE')
     signingConfigs {
         if (ks) {
@@ -38,4 +39,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
 }

@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.narabuspulse",
+      "sha256_cert_fingerprints": [
+        "CC:E5:4C:49:26:01:06:8E:5F:95:8D:E3:1D:10:DE:98:E0:1C:30:04:76:F5:A9:C6:E8:DA:EA:68:BE:91:35:83"
+      ]
+    }
+  }
+]
