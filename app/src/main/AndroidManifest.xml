@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
         android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
         <!-- サイトとアプリの関連付け（Digital Asset Links） -->
@@ -47,6 +48,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="nara-bus-pulse.base44.app" />
             </intent-filter>
+        </activity>
+
+        <!-- 「データを管理」「サイトの設定」ショートカット用（起動時にライブラリが参照するため必須） -->
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL"
+                android:value="@string/launch_url" />
         </activity>
 
         <!-- Web プッシュ通知をこのアプリの通知として表示する（通知の委譲） -->

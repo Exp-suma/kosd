@@ -10,8 +10,8 @@ android {
         applicationId 'app.narabuspulse'
         minSdk 24
         targetSdk 36
-        versionCode 3
-        versionName '2.0'
+        versionCode 4
+        versionName '2.0.1'
     }
 
     // 署名鍵は環境変数で渡す（README 参照）。
