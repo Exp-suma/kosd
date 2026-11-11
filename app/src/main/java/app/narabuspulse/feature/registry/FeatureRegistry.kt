@@ -34,7 +34,7 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("predict/accuracy") { _ -> app.narabuspulse.feature.predict.PredictAccuracyScreen() }
     put("predict/report") { _ -> app.narabuspulse.feature.predict.PredictReportScreen() }
     put("predict/watch") { _ -> app.narabuspulse.feature.predict.PredictWatchScreen() }
-    put("nara") { a -> app.narabuspulse.feature.nara.NaraSearchScreen(a) }
+    put("nara") { a -> app.narabuspulse.feature.transit.TransitScreen(a, naraTabs = true) }
     put("nara/stops") { _ -> app.narabuspulse.feature.nara.NaraStopsScreen() }
     put("nara/stops/{code}") { a -> app.narabuspulse.feature.nara.NaraStopDetailScreen(a["code"].orEmpty()) }
     put("nara/timetable") { a -> app.narabuspulse.feature.nara.NaraTimetableScreen(a) }

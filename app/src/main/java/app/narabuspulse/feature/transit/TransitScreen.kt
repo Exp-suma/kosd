@@ -110,26 +110,28 @@ private fun sortOptions(list: List<JsonElement>, key: String): List<JsonElement>
         "transfers" -> list.sortedWith(compareBy<JsonElement> { it.dbl("transferCount") ?: 9.0 }.then(dur))
         "walk" -> list.sortedWith(compareBy<JsonElement> { it.dbl("walkSecs") ?: big }.then(dur))
         "fare" -> list.sortedWith(compareBy<JsonElement> { it.dbl("fare.ticket") ?: big }.then(dur))
-        else -> list.sortedWith(compareBy<JsonElement> { it.dbl("arrivalSecs") ?: big }.then(dur))
+        else -> list.sortedWith(compareBy<JsonElement> { it.dbl("effectiveArrivalSecs") ?: it.dbl("arrivalSecs") ?: big }.then(dur))
     }
 }
 
 /** 総合経路検索（Web: transit.jsx） */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TransitScreen(args: Map<String, String>) {
+fun TransitScreen(args: Map<String, String>, naraTabs: Boolean = false) {
     val nav = LocalNav.current
     val scope = rememberCoroutineScope()
     val planId = args["planId"]
     val argDate = args["date"]?.takeIf { Regex("^\\d{4}-\\d{2}-\\d{2}$").matches(it) }
-    var from by remember { mutableStateOf<Place?>(null) }
-    var to by remember { mutableStateOf<Place?>(null) }
+    var from by remember { mutableStateOf(args["from"]?.let { Place("bus:$it", args["fromName"] ?: "停留所 $it", kind = "bus", code = it, feedName = "奈良交通") }) }
+    var to by remember { mutableStateOf(args["to"]?.let { Place("bus:$it", args["toName"] ?: "停留所 $it", kind = "bus", code = it, feedName = "奈良交通") }) }
     var date by remember { mutableStateOf(argDate ?: jstTodayKey()) }
     var time by remember { mutableStateOf(jstClock(30).toLocalTime().toString().take(5)) }
     var type by remember { mutableStateOf("departure") }
     var walkSpeed by remember { mutableStateOf(80) }
     var maxTransfers by remember { mutableStateOf(3) }
     var sortKey by remember { mutableStateOf("arrival") }
+    var transferBuffer by remember { mutableStateOf(4) }
+    var progress by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
     var result by remember { mutableStateOf<JsonElement?>(null) }
@@ -140,14 +142,15 @@ fun TransitScreen(args: Map<String, String>) {
 
     fun run(f: Place? = from, t: Place? = to) {
         if (f == null || t == null) return
-        busy = true; error = ""; lastQuery = f to t
+        busy = true; error = ""; progress = ""; lastQuery = f to t
         scope.launch {
             try {
-                val data = Api.rpc("transit/hybrid-fns#searchJourneyRoutes", jsonOf("from" to f.payload(), "to" to t.payload(), "date" to date, "time" to (if (timeBased) time else null), "type" to type,
-                    "walkSpeed" to walkSpeed, "maxTransfers" to maxTransfers, "numItineraries" to 4))
+                val now = jstClock(1).toLocalTime().toString().take(5)
+                val data = JourneyPlanner.search(jsonOf("from" to f.payload(), "to" to t.payload(), "date" to date, "time" to (if (timeBased) time else null), "type" to type,
+                    "walkSpeed" to walkSpeed, "maxTransfers" to maxTransfers, "transferBuffer" to transferBuffer, "nowClock" to now)) { progress = it }
                 result = data
-                decorated = (Logic.call("glue/transit", "decorateOptions", JsonArray(data.list("options"))) as? JsonArray).orEmpty()
-                if (data.list("options").isEmpty()) error = data.str("error") ?: "この条件で取得できる経路がありませんでした。"
+                decorated = data.list("options")
+                if (decorated.isEmpty()) error = data.str("error")?.ifBlank { null } ?: "この条件で取得できる経路がありませんでした。"
                 favReload++
             } catch (e: Throwable) { if (e is CancellationException) throw e; result = null; decorated = emptyList(); error = e.userMessage().ifBlank { "経路を取得できませんでした" } } finally { busy = false }
         }
@@ -155,13 +158,14 @@ fun TransitScreen(args: Map<String, String>) {
     val options = remember(decorated, sortKey) { sortOptions(decorated, sortKey) }
 
     ScreenList {
-        item {
+        if (naraTabs) item { app.narabuspulse.feature.nara.NaraNav("/nara") }
+        else item {
             TextButton(onClick = { nav.go(if (planId != null) "/expedition/$planId" else "/expedition") }) { Text(if (planId != null) "← 遠征計画へ戻る" else "← 遠征プランナーへ", fontSize = 12.sp) }
         }
         item {
             Column {
-                Heading("総合経路検索", "奈良交通バスは公式API（奈良バスなびweb）の実データ、鉄道・他社交通機関は Transit API の実データで検索し、乗り換えを突き合わせて1つの経路にまとめます。取得できない区間・時刻・運賃は推測せず「情報なし」と表示します。")
-                TextButton(onClick = { nav.go("/nara/data") }) { Text("データ・診断（管理者向け）", fontSize = 11.sp) }
+                Heading("乗換案内（奈良交通バス＋鉄道）", "奈良交通の停留所・駅・施設のどれからでも検索できます。バスの直行便、バス同士の乗り継ぎ、バスと鉄道の乗り継ぎを1つの一覧にまとめます。奈良交通は公式API（奈良バスなびweb）、鉄道・他社は Transit API の実データだけを使い、取得できない区間・時刻・運賃は推測せず「情報なし」と表示します。")
+                if (!naraTabs) TextButton(onClick = { nav.go("/nara/data") }) { Text("データ・診断（管理者向け）", fontSize = 11.sp) }
             }
         }
         item { FavoritesBar(from, to, sortKey, favReload) { f, t -> from = f; to = t; run(f, t) } }
@@ -179,10 +183,12 @@ fun TransitScreen(args: Map<String, String>) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 6.dp)) {
                     SelectField(WALK_SPEEDS, walkSpeed, { walkSpeed = it }, label = "徒歩速度")
                     SelectField((0..4).map { it to if (it == 0) "なし" else "${it}回" }, maxTransfers, { maxTransfers = it }, label = "乗換上限")
+                    SelectField(listOf(2, 4, 6, 10).map { it to "${it}分" }, transferBuffer, { transferBuffer = it }, label = "乗換の余裕")
                     SelectField(SORT_CHOICES, sortKey, { sortKey = it }, label = "並び順")
                 }
                 if (from == null || to == null) Text("出発地と目的地を候補から選んでください（奈良交通の停留所も選べます）。", fontSize = 11.sp, color = Brand.Warning)
                 Muted("奈良交通の区間は公式API（奈良バスなびweb）の実データ、鉄道・他社交通機関は Transit API の実データを使用します。取得できない区間は表示しません。", 10)
+                if (busy && progress.isNotBlank()) Muted("$progress…", 11)
                 SmallButton(if (busy) "検索中…" else "経路を検索", { run() }, enabled = !busy && from != null && to != null, icon = Icons.Outlined.Search, primary = true, modifier = Modifier.padding(top = 6.dp))
             }
         }
@@ -200,7 +206,7 @@ fun TransitScreen(args: Map<String, String>) {
                     Text("${r.str("from.label").orEmpty()} → ${r.str("to.label").orEmpty()}", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     Muted("${r.str("date").orEmpty()}（${TYPE_LABEL[r.str("type")] ?: r.str("type").orEmpty()}${r.str("time")?.let { " $it" } ?: ""}）／候補 ${options.size} 件", 11)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Tag("🚌 バスのみ ${r.int("counts.bus") ?: 0}", Brand.Success); Tag("🚆 鉄道など ${r.int("counts.transit") ?: 0}", INFO); Tag("🚌🚆 バス＋鉄道 ${r.int("counts.hybrid") ?: 0}", PURPLE)
+                        Tag("🚌 バスのみ ${r.int("counts.bus") ?: 0}", Brand.Success); Tag("🚆 鉄道など ${r.int("counts.transit") ?: 0}", INFO); Tag("🚌🚆 バス＋鉄道 ${r.int("counts.hybrid") ?: 0}", PURPLE); (r.int("counts.busTransfer") ?: 0).takeIf { it > 0 }?.let { Tag("🚌⇄🚌 バス乗継 $it", Brand.Orange) }
                     }
                     Muted("奈良交通API ${if (r.bool("sources.narakotsu.ok") == true) "OK" else "取得不可"}／Transit API ${if (r.bool("sources.transit.ok") == true) "OK" else "取得不可"}　処理 ${r.int("durationMs") ?: 0}ms", 10)
                 }
@@ -370,6 +376,7 @@ private fun RouteResultCard(option: JsonElement, date: String, planId: String?) 
         }
         Column(Modifier.padding(vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { option.items("legs").forEach { LegRow(it) } }
         option.str("hybridNote")?.takeIf { it.isNotBlank() }?.let { Muted("乗り換え: $it", 11) }
+        (option.int("_implicitWalkMin") ?: 0).takeIf { it >= 2 }?.let { m -> Text("⚠ 駅・停留所までの徒歩 約${m}分は上の時刻に含まれていません${option.str("_effArr")?.takeIf { it.isNotBlank() }?.let { "（実質の到着 $it 頃）" } ?: ""}", fontSize = 10.sp, color = Brand.Warning) }
         val tr = option.items("transfers")
         if (tr.isNotEmpty()) Muted("乗換: " + tr.joinToString("、") { it.str("name").orEmpty() }, 11)
         Muted(option.str("_fareNote").orEmpty(), 10)
