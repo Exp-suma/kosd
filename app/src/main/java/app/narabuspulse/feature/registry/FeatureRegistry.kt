@@ -20,6 +20,15 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("analytics/transfers") { _ -> app.narabuspulse.feature.analytics.TransfersScreen() }
     put("analytics/vehicles") { _ -> app.narabuspulse.feature.analytics.VehicleUtilizationScreen() }
     put("analytics/longterm") { _ -> app.narabuspulse.feature.analytics.LongTermScreen() }
+    put("research") { _ -> app.narabuspulse.feature.research.ResearchCenterScreen() }
+    put("research/vehicles") { a -> app.narabuspulse.feature.research.ResearchVehiclesScreen(a["vehicle"]) }
+    put("research/routes") { a -> app.narabuspulse.feature.research.ResearchRoutesScreen(a["route"]) }
+    put("research/diff") { _ -> app.narabuspulse.feature.research.ResearchDiffScreen() }
+    put("forecast") { _ -> app.narabuspulse.feature.forecast.ForecastScreen() }
+    put("forecast/plan") { _ -> app.narabuspulse.feature.forecast.PlanForecastScreen() }
+    put("forecast/verify") { _ -> app.narabuspulse.feature.forecast.PlanVerifyScreen() }
+    put("forecast/history") { _ -> app.narabuspulse.feature.forecast.ForecastHistoryScreen() }
+    put("forecast/accuracy") { _ -> app.narabuspulse.feature.forecast.ForecastAccuracyScreen() }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }
