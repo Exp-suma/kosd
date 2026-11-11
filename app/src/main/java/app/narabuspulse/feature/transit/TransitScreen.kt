@@ -124,7 +124,7 @@ fun TransitScreen(args: Map<String, String>, naraTabs: Boolean = false) {
     val argDate = args["date"]?.takeIf { Regex("^\\d{4}-\\d{2}-\\d{2}$").matches(it) }
     var from by remember { mutableStateOf(args["from"]?.let { Place("bus:$it", args["fromName"] ?: "停留所 $it", kind = "bus", code = it, feedName = "奈良交通") }) }
     var to by remember { mutableStateOf(args["to"]?.let { Place("bus:$it", args["toName"] ?: "停留所 $it", kind = "bus", code = it, feedName = "奈良交通") }) }
-    var date by remember { mutableStateOf(argDate ?: jstTodayKey()) }
+    var date by remember { mutableStateOf(argDate ?: jstClock(30).toLocalDate().toString()) }
     var time by remember { mutableStateOf(jstClock(30).toLocalTime().toString().take(5)) }
     var type by remember { mutableStateOf("departure") }
     var walkSpeed by remember { mutableStateOf(80) }
@@ -340,7 +340,7 @@ private fun FavoritesBar(from: Place?, to: Place?, sortKey: String, reloadKey: I
                 } catch (e: Throwable) { if (e is CancellationException) throw e; message = e.userMessage().ifBlank { "保存できませんでした" } } finally { busy = false }
             }
         }, enabled = !busy && from != null && to != null, icon = Icons.Outlined.StarOutline)
-        val pairs = recents.value.filter { !it.str("from_endpoint").isNullOrBlank() && !it.str("to_endpoint").isNullOrBlank() }
+        val pairs = recents.value.filter { !it.str("from_endpoint").isNullOrBlank() && !it.str("to_endpoint").isNullOrBlank() }.distinctBy { it.str("from_endpoint") + ">" + it.str("to_endpoint") }.take(8)
         if (pairs.isNotEmpty()) {
             Text("🕘 最近の検索", fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 6.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
