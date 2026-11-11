@@ -9,5 +9,6 @@ class App : Application() {
         Session.init(this)
         app.narabuspulse.core.Logic.init(this)
         app.narabuspulse.core.Net.init(this)
+        app.narabuspulse.core.Notifier.createChannels(this)
     }
 }

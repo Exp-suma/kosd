@@ -56,6 +56,8 @@ class MainActivity : ComponentActivity() {
             Session.setToken(t)
             lifecycleScope.launch { runCatching { Session.setUser(Api.me()) } }
         }
+        // 通知を押したとき：通知が指定した画面を開く
+        intent?.getStringExtra("route")?.let { DevRoute.pending = it }
         // 開発用（デバッグ版のみ）：--es dev_route /board などで画面を開く
         if (BuildConfig.DEBUG) intent?.getStringExtra("dev_route")?.let { DevRoute.pending = it }
         val data = intent?.data ?: return

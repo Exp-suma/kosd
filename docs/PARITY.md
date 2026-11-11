@@ -65,7 +65,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `nara/stops/{code}` | 停留所の詳細 | `nara.stops.$code.jsx` |
 | ⬜ 未移植 | `nara/stops` | 奈良交通 停留所検索 | `nara.stops.index.jsx` |
 | ⬜ 未移植 | `nara/timetable` | 奈良交通 区間時刻表 | `nara.timetable.jsx` |
-| ⬜ 未移植 | `notifications` | 通知 | `notifications.jsx` |
+| 🟨 移植済み（未検証） | `notifications` | 通知 | `notifications.jsx` |
 | ⬜ 未移植 | `occlusion/compare` | 撮影角度・画角の比較 | `occlusion.compare.jsx` |
 | ⬜ 未移植 | `occlusion/data` | 交通量データ | `occlusion.data.jsx` |
 | ⬜ 未移植 | `occlusion/hourly` | 時間帯別の被り率 | `occlusion.hourly.jsx` |
@@ -93,8 +93,8 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `research` | 運用調査データセンター | `research.index.jsx` |
 | ⬜ 未移植 | `research/routes` | 系統別充当車両 | `research.routes.jsx` |
 | ⬜ 未移植 | `research/vehicles` | 車両別運用履歴 | `research.vehicles.jsx` |
-| ⬜ 未移植 | `rides/history` | 乗車履歴 | `rides.history.jsx` |
-| ⬜ 未移植 | `rides/plans` | 乗車予定 | `rides.plans.jsx` |
+| 🟨 移植済み（未検証） | `rides/history` | 乗車履歴 | `rides.history.jsx` |
+| 🟨 移植済み（未検証） | `rides/plans` | 乗車予定 | `rides.plans.jsx` |
 | ⬜ 未移植 | `search` | 自由条件検索 | `search.jsx` |
 | ⬜ 未移植 | `services` | 外部サービス接続 | `services.index.jsx` |
 | ⬜ 未移植 | `services/lodging` | 宿泊検索 | `services.lodging.jsx` |
@@ -116,7 +116,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `sightings` | 目撃情報マップ | `sightings.jsx` |
 | ⬜ 未移植 | `sim3d` | AI撮影環境3Dシミュレーター | `sim3d.index.jsx` |
 | ⬜ 未移植 | `sim3d/saved` | 保存したシミュレーション | `sim3d.saved.jsx` |
-| 🟨 移植済み（未検証） | `status` | 車両状態一覧 | `status.jsx` |
+| 🟨 移植済み（エミュレーターで表示確認） | `status` | 車両状態一覧 | `status.jsx` |
 | ⬜ 未移植 | `terrain/{routeName}` | 路線地形 | `terrain.$routeName.jsx` |
 | ⬜ 未移植 | `terrain/ai` | AI地形分析 | `terrain.ai.jsx` |
 | ⬜ 未移植 | `terrain/compare` | 路線比較 | `terrain.compare.jsx` |
@@ -130,9 +130,9 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `vehicle-catalog` | 車両図鑑 | `vehicle-catalog.index.jsx` |
 | ⬜ 未移植 | `vehicle-db/{vehicleNumber}` | 車両詳細 | `vehicle-db.$vehicleNumber.jsx` |
 | ⬜ 未移植 | `vehicle-db` | 車両データベース | `vehicle-db.index.jsx` |
-| ⬜ 未移植 | `vehicle-notify/history` | 車両通知の履歴 | `vehicle-notify.history.jsx` |
-| ⬜ 未移植 | `vehicle-notify` | 車両通知 | `vehicle-notify.index.jsx` |
-| ⬜ 未移植 | `vehicle-notify/place` | 地点を指定した車両通知 | `vehicle-notify.place.jsx` |
+| 🟨 移植済み（未検証） | `vehicle-notify/history` | 車両通知の履歴 | `vehicle-notify.history.jsx` |
+| 🟨 移植済み（未検証） | `vehicle-notify` | 車両通知 | `vehicle-notify.index.jsx` |
+| 🟨 移植済み（未検証） | `vehicle-notify/place` | 地点を指定した車両通知 | `vehicle-notify.place.jsx` |
 | 🟨 移植済み（エミュレーターで表示確認） | `vehicles` | 車両位置 | `vehicles.jsx` |
 | ⬜ 未移植 | `weather/{code}` | 市町村別30日予報 | `weather.$code.jsx` |
 | ⬜ 未移植 | `weather/ai` | AI地域別気象解説 | `weather.ai.jsx` |
