@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">奈良バスパルス</string>
+    <string name="app_url">https://nara-bus-pulse.base44.app/</string>
+    <string name="offline_message">インターネットに接続できません。\n接続を確認してから再読み込みしてください。</string>
+    <string name="retry">再読み込み</string>
+</resources>
