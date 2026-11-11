@@ -67,8 +67,9 @@ export const Route = createFileRoute("/api/native/rpc")({
         if (!fn) return Response.json({ error: `不明な関数: ${name.slice(0, 120)}` }, { status: 404, headers: NO_STORE });
 
         try {
-          const { result, error } = await fn.__executeServer({ data: body.data, method: fn.method, context: {} });
-          if (error) return errorResponse(error);
+          // サーバー関数を通常どおり呼ぶ（入力検証・認証ミドルウェア・本体がすべて実行される）。
+          // 認証はこのリクエストの Authorization ヘッダー（利用者のトークン）がそのまま使われる。
+          const result = await fn({ data: body.data });
           if (result instanceof Response) return result;
           if (result instanceof ReadableStream) {
             return new Response(result, { headers: { ...NO_STORE, "content-type": "application/x-ndjson; charset=utf-8" } });
