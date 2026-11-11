@@ -29,7 +29,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `camera-bridge` | Androidブリッジ仕様 | `camera-bridge.jsx` |
 | ⬜ 未移植 | `collection` | データ収集 | `collection.jsx` |
 | ⬜ 未移植 | `compare` | お気に入り・車両比較 | `compare.jsx` |
-| ⬜ 未移植 | `dashboard` | パーソナルダッシュボード | `dashboard.jsx` |
+| 🟨 移植済み（未検証） | `dashboard` | パーソナルダッシュボード | `dashboard.jsx` |
 | ⬜ 未移植 | `discover` | 撮影地新規開拓AI | `discover.index.jsx` |
 | ⬜ 未移植 | `discover/saved` | 保存した撮影候補 | `discover.saved.jsx` |
 | ⬜ 未移植 | `expedition/{planId}` | 遠征計画 | `expedition.$planId.jsx` |
@@ -43,7 +43,7 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 | ⬜ 未移植 | `field/records` | 現地記録 | `field.records.jsx` |
 | 🟨 移植済み（未検証） | `fleet/{carCode}` | 車両詳細 | `fleet.$carCode.jsx` |
 | 🟨 移植済み（未検証） | `fleet/favorites` | お気に入り車両 | `fleet.favorites.jsx` |
-| 🟨 移植済み（未検証） | `fleet` | 車番検索 | `fleet.index.jsx` |
+| 🟨 移植済み（エミュレーターで表示確認） | `fleet` | 車番検索 | `fleet.index.jsx` |
 | 🟨 移植済み（未検証） | `fleet/logs` | 全車両ログ | `fleet.logs.jsx` |
 | ⬜ 未移植 | `forecast/accuracy` | 予測精度分析 | `forecast.accuracy.jsx` |
 | ⬜ 未移植 | `forecast/history` | 予測履歴 | `forecast.history.jsx` |
