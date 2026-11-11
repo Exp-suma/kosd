@@ -65,6 +65,11 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("outing") { _ -> app.narabuspulse.feature.outing.OutingDashboardScreen() }
     put("radar") { _ -> app.narabuspulse.feature.radar.RadarScreen() }
     put("occlusion") { _ -> app.narabuspulse.feature.occlusion.OcclusionScreen() }
+    put("terrain") { _ -> app.narabuspulse.feature.terrain.TerrainDashboardScreen() }
+    put("terrain/hazards") { _ -> app.narabuspulse.feature.terrain.TerrainHazardsScreen() }
+    put("terrain/compare") { _ -> app.narabuspulse.feature.terrain.TerrainCompareScreen() }
+    put("terrain/ai") { _ -> app.narabuspulse.feature.terrain.TerrainAiScreen() }
+    put("terrain/{routeName}") { a -> app.narabuspulse.feature.terrain.TerrainRouteScreen(a["routeName"].orEmpty()) }
     put("occlusion/hourly") { _ -> app.narabuspulse.feature.occlusion.OcclusionHourlyScreen() }
     put("occlusion/compare") { _ -> app.narabuspulse.feature.occlusion.OcclusionCompareScreen() }
     put("occlusion/ranking") { _ -> app.narabuspulse.feature.occlusion.OcclusionRankingScreen() }
