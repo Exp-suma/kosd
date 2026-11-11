@@ -34,6 +34,11 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("predict/accuracy") { _ -> app.narabuspulse.feature.predict.PredictAccuracyScreen() }
     put("predict/report") { _ -> app.narabuspulse.feature.predict.PredictReportScreen() }
     put("predict/watch") { _ -> app.narabuspulse.feature.predict.PredictWatchScreen() }
+    put("nara") { a -> app.narabuspulse.feature.nara.NaraSearchScreen(a) }
+    put("nara/stops") { _ -> app.narabuspulse.feature.nara.NaraStopsScreen() }
+    put("nara/stops/{code}") { a -> app.narabuspulse.feature.nara.NaraStopDetailScreen(a["code"].orEmpty()) }
+    put("nara/timetable") { a -> app.narabuspulse.feature.nara.NaraTimetableScreen(a) }
+    put("nara/data") { _ -> app.narabuspulse.feature.nara.NaraDataScreen() }
     put("vehicles") { _ -> app.narabuspulse.feature.vehicles.VehiclesScreen() }
     put("status") { _ -> app.narabuspulse.feature.status.StatusScreen() }
     put("all-vehicles") { a -> app.narabuspulse.feature.fleet.AllVehiclesScreen(a["focus"]) }
