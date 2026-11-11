@@ -68,6 +68,8 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("automation") { _ -> app.narabuspulse.feature.automation.AutomationScreen() }
     put("automation/reports") { _ -> app.narabuspulse.feature.automation.AutomationReportsScreen() }
     put("automation/monitor") { _ -> app.narabuspulse.feature.automation.AutomationMonitorScreen() }
+    put("discover") { _ -> app.narabuspulse.feature.discover.DiscoverScreen() }
+    put("discover/saved") { _ -> app.narabuspulse.feature.discover.DiscoverSavedScreen() }
     put("terrain") { _ -> app.narabuspulse.feature.terrain.TerrainDashboardScreen() }
     put("terrain/hazards") { _ -> app.narabuspulse.feature.terrain.TerrainHazardsScreen() }
     put("terrain/compare") { _ -> app.narabuspulse.feature.terrain.TerrainCompareScreen() }
