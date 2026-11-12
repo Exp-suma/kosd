@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- デバッグ版のみ：開発用プロキシの証明書（dev_proxy_ca）と端末のユーザー証明書を信頼する。 -->
 <network-security-config>
+    <!-- ローカルブリッジ（同じWi-Fi上の http://…）へ接続するため平文HTTPを許可（本番版はマニフェストの usesCleartextTraffic） -->
+    <base-config cleartextTrafficPermitted="true" />
     <debug-overrides>
         <trust-anchors>
             <certificates src="system" />

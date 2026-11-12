@@ -25,7 +25,10 @@ object Export {
     suspend fun text(context: Context, fileName: String, mime: String, text: String): String =
         save(context, fileName, mime, text.toByteArray(Charsets.UTF_8))
 
-    suspend fun save(context: Context, fileName: String, mime: String, bytes: ByteArray): String = withContext(Dispatchers.IO) {
+    suspend fun save(context: Context, fileName: String, mime: String, bytes: ByteArray): String = saveStream(context, fileName, mime) { it.write(bytes) }
+
+    /** 大きなファイル向け：出力先へ直接書き込む（メモリに全体を載せない）。 */
+    suspend fun saveStream(context: Context, fileName: String, mime: String, write: (java.io.OutputStream) -> Unit): String = withContext(Dispatchers.IO) {
         val safe = fileName.replace(Regex("[\\\\/:*?\"<>|]"), "_")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
@@ -35,11 +38,11 @@ object Export {
             }
             val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
                 ?: throw java.io.IOException("保存できませんでした")
-            context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) } ?: throw java.io.IOException("保存できませんでした")
+            context.contentResolver.openOutputStream(uri)?.use(write) ?: throw java.io.IOException("保存できませんでした")
         } else {
             // Android 9 以前はアプリ専用のダウンロードフォルダへ（権限不要）
             val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir
-            File(dir, safe).writeBytes(bytes)
+            File(dir, safe).outputStream().use(write)
         }
         "ダウンロード/$safe"
     }
