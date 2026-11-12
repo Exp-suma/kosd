@@ -11,6 +11,9 @@ object Config {
     /** Google ログイン後に Base44 が戻ってくる URL（同 auth-callback.js）。 */
     val AUTH_CALLBACK_URL = "$BASE_URL/api/native/auth-callback"
 
+    /** ログインせずに使うためのゲスト用トークンを発行する窓口（同 guest.js）。 */
+    val GUEST_URL = "$BASE_URL/api/native/guest"
+
     val apiBase = "$BASE_URL/api/apps/$APP_ID"
 
 }

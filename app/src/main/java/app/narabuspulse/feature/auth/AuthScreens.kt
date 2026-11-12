@@ -62,7 +62,7 @@ private enum class Step { Login, Register, Otp, Forgot, Reset, Mfa }
 
 /** ログイン～新規登録～パスワード再設定（Web の /login /register /forgot-password /reset-password）。 */
 @Composable
-fun AuthFlow(onSignedIn: () -> Unit, initialResetToken: String? = null) {
+fun AuthFlow(onSignedIn: () -> Unit, initialResetToken: String? = null, onSkip: (() -> Unit)? = null) {
     var step by remember { mutableStateOf(if (initialResetToken != null) Step.Reset else Step.Login) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -138,6 +138,7 @@ fun AuthFlow(onSignedIn: () -> Unit, initialResetToken: String? = null) {
                             "パスワードを忘れた", { error = null; step = Step.Forgot },
                             "アカウントを作成", { error = null; step = Step.Register },
                         )
+                        if (onSkip != null) TextButton(onSkip, Modifier.fillMaxWidth()) { Text("ログインせずに使う") }
                     }
                     Step.Register -> {
                         OutlinedTextField(fullName, { fullName = it }, label = { Text("お名前（任意）") }, singleLine = true, modifier = Modifier.fillMaxWidth())

@@ -100,6 +100,18 @@ object Api {
 
     // ---------------- 認証 ----------------
 
+    /**
+     * ゲスト用のアクセストークンを受け取る。サーバーが未対応（404 など）なら null。
+     * ネットワークの失敗は例外のまま返し、呼び出し側で再試行できるようにする。
+     */
+    suspend fun guestToken(): String? = withContext(Dispatchers.IO) {
+        val req = Request.Builder().url(Config.GUEST_URL).post(jsonBody(JsonObject(emptyMap()))).tag(NoAuth::class.java, NoAuth).build()
+        http.newCall(req).execute().use { res ->
+            if (!res.isSuccessful) return@use null
+            runCatching { Json.parse(res.body?.string().orEmpty()).str("access_token") }.getOrNull()?.takeIf { it.isNotBlank() }
+        }
+    }
+
     suspend fun login(email: String, password: String): JsonElement =
         call(post("${Config.apiBase}/auth/login", jsonOf("email" to email, "password" to password), auth = false))
 

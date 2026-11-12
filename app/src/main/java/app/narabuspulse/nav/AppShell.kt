@@ -189,7 +189,8 @@ private fun DrawerContent(path: String, onSelect: (NavItem) -> Unit, onLogout: (
                 Spacer(Modifier.width(10.dp))
                 Column {
                     Text("バスロケ監視", fontWeight = FontWeight.Bold)
-                    Text(user.str("full_name") ?: user.str("email") ?: "", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    val guest by Session.guest.collectAsState()
+                    Text(if (guest) "ゲストで利用中" else user.str("full_name") ?: user.str("email") ?: "", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             HorizontalDivider()
@@ -214,11 +215,12 @@ private fun DrawerContent(path: String, onSelect: (NavItem) -> Unit, onLogout: (
                 }
             }
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            val guestMode by Session.guest.collectAsState()
             NavigationDrawerItem(
-                label = { Text("ログアウト", fontSize = 13.sp) },
+                label = { Text(if (guestMode) "自分のアカウントでログイン" else "ログアウト", fontSize = 13.sp) },
                 icon = { Icon(Icons.Outlined.Logout, null, Modifier.size(20.dp)) },
                 selected = false,
-                onClick = onLogout,
+                onClick = { if (guestMode) Session.requestLogin(true) else onLogout() },
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
         }
