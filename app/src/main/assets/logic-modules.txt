@@ -31,6 +31,7 @@ forecast/plan-engine
 forecast/plan-weights
 forecast/weights
 gas/functions
+glue/camera
 glue/journey
 glue/shoot
 glue/sim3d

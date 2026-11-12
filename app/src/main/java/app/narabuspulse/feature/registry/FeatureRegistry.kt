@@ -78,6 +78,8 @@ fun featureScreens(): Map<String, @Composable (Map<String, String>) -> Unit> = b
     put("wifi") { _ -> app.narabuspulse.feature.wifi.WifiScreen() }
     put("wifi/history") { _ -> app.narabuspulse.feature.wifi.WifiHistoryScreen() }
     put("wifi/setup") { _ -> app.narabuspulse.feature.wifi.WifiSetupScreen() }
+    put("camera") { _ -> app.narabuspulse.feature.camera.CameraConsoleScreen() }
+    put("camera-bridge") { _ -> app.narabuspulse.feature.camera.CameraBridgeScreen() }
     put("terrain") { _ -> app.narabuspulse.feature.terrain.TerrainDashboardScreen() }
     put("terrain/hazards") { _ -> app.narabuspulse.feature.terrain.TerrainHazardsScreen() }
     put("terrain/compare") { _ -> app.narabuspulse.feature.terrain.TerrainCompareScreen() }
