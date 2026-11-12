@@ -53,6 +53,7 @@ import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.list
 import app.narabuspulse.core.objAt
 import app.narabuspulse.core.text
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.bus.BusFormat
 import app.narabuspulse.feature.bus.BusGate
 import app.narabuspulse.feature.bus.BusSnapshot
@@ -69,12 +70,11 @@ import app.narabuspulse.ui.kit.SmallButton
 import app.narabuspulse.ui.kit.Tag
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonArray
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonArray
 
-private val INFO = Color(0xFF2F6FB0)
 
 @Composable
 fun Heading(title: String, description: String) {

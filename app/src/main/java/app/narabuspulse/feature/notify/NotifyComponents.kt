@@ -59,6 +59,7 @@ import app.narabuspulse.core.objAt
 import app.narabuspulse.core.rememberLocationRequest
 import app.narabuspulse.core.str
 import app.narabuspulse.core.text
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.nav.LocalNav
 import app.narabuspulse.ui.kit.ChipRow
 import app.narabuspulse.ui.kit.EmptyState
@@ -77,7 +78,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 
-private val INFO = Color(0xFF2F6FB0)
 
 fun toneColor(tone: String?): Color = when (tone) {
     "success" -> Brand.Success; "info" -> INFO; "warning" -> Brand.Warning; "danger" -> Brand.Destructive; "primary" -> Brand.Orange; else -> Brand.MutedFg

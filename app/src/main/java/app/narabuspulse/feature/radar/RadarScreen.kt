@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
+import app.narabuspulse.core.JST
 import app.narabuspulse.core.Logic
 import app.narabuspulse.core.Net
 import app.narabuspulse.core.bool
@@ -72,15 +73,13 @@ import app.narabuspulse.ui.kit.SmallButton
 import app.narabuspulse.ui.kit.Tag
 import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.theme.Brand
-import kotlinx.coroutines.delay
-import kotlinx.serialization.json.JsonElement
 import java.time.Instant
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
+import kotlinx.serialization.json.JsonElement
 
-private val JST = ZoneId.of("Asia/Tokyo")
 private val CLOCK = DateTimeFormatter.ofPattern("HH:mm")
 private val STAMP = DateTimeFormatter.ofPattern("M/d HH:mm")
 private fun clock(ts: Long?) = ts?.let { CLOCK.format(Instant.ofEpochMilli(it).atZone(JST)) } ?: "—"

@@ -29,7 +29,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -43,6 +42,7 @@ import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.long
 import app.narabuspulse.core.rememberLocationRequest
 import app.narabuspulse.core.str
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.bus.BusFormat
 import app.narabuspulse.feature.bus.jsNum
 import app.narabuspulse.feature.notify.CheckRow
@@ -62,7 +62,6 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-private val INFO = Color(0xFF2F6FB0)
 
 /** 降雨の見込み状態のバッジ（Web: components/rain/RainStateBadge.jsx） */
 @Composable

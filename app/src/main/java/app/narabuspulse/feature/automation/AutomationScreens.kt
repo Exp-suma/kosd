@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
@@ -55,6 +52,7 @@ import app.narabuspulse.feature.data.Heading
 import app.narabuspulse.nav.LocalNav
 import app.narabuspulse.ui.kit.ChipRow
 import app.narabuspulse.ui.kit.DateField
+import app.narabuspulse.ui.kit.LabeledField
 import app.narabuspulse.ui.kit.Panel
 import app.narabuspulse.ui.kit.ScreenList
 import app.narabuspulse.ui.kit.SelectField
@@ -65,6 +63,8 @@ import app.narabuspulse.ui.kit.rememberConfirmer
 import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -72,8 +72,6 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import java.time.LocalDate
-import java.time.ZoneId
 
 private val TABS = listOf("/automation" to "ワークフロー", "/automation/reports" to "日報・週報・月報", "/automation/monitor" to "取得監視・データ保全")
 private val ACTIONS = listOf("daily_report" to "日報を生成", "weekly_report" to "週報を生成", "monthly_report" to "月報を生成", "notify" to "通知（実行履歴に記録）", "data_check" to "データ取得監視を実行", "weather_refresh" to "気象データを更新", "backup_check" to "バックアップ検査")
@@ -198,8 +196,6 @@ fun AutomationScreen() {
     }
 }
 
-@Composable private fun F(label: String, value: String, modifier: Modifier = Modifier.fillMaxWidth(), number: Boolean = false, placeholder: String = "", onChange: (String) -> Unit) =
-    OutlinedTextField(value, onChange, label = { Text(label, fontSize = 10.sp) }, placeholder = { Text(placeholder, fontSize = 12.sp) }, singleLine = true, modifier = modifier, keyboardOptions = KeyboardOptions(keyboardType = if (number) KeyboardType.Decimal else KeyboardType.Text))
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -215,7 +211,7 @@ private fun RuleForm(rule: JsonElement?, onSaved: () -> Unit, onCancel: () -> Un
     fun set(k: String, v: String) { cond = cond + (k to v) }
     fun n(k: String, d: Double) = cond[k]?.toDoubleOrNull()?.takeIf { it != 0.0 } ?: d
     Panel(title = if (rule != null) "ルールを編集" else "新しいルール") {
-        F("ルール名", name, placeholder = "毎朝の日報") { name = it }
+        LabeledField("ルール名", name, placeholder = "毎朝の日報") { name = it }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             SelectField(TRIGGERS, trigger, { trigger = it }, label = "実行条件")
             if (trigger == "daily" || trigger == "weekly") TimeField(runTime, { runTime = it }, label = "実行時刻（JST）")
@@ -223,13 +219,13 @@ private fun RuleForm(rule: JsonElement?, onSaved: () -> Unit, onCancel: () -> Un
             if (trigger == "shoot_window") SelectField(PURPOSES, cond["purpose"].orEmpty(), { set("purpose", it) }, label = "撮影の目的")
         }
         when (trigger) {
-            "snow_forecast" -> Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("市町村コード", cond["code"].orEmpty(), Modifier.weight(1f), placeholder = "tenkawa") { set("code", it) }; F("降雪しきい値（cm/48h）", cond["thresholdCm"].orEmpty(), Modifier.weight(1f), true) { set("thresholdCm", it) } }
-            "stale_data" -> F("未更新とみなす分数", cond["minutes"].orEmpty(), number = true) { set("minutes", it) }
-            "vehicle_running" -> F("車両番号（車両名）", cond["vehicle"].orEmpty(), placeholder = "奈良200か115") { set("vehicle", it) }
-            "route_running" -> F("系統", cond["route"].orEmpty(), placeholder = "1") { set("route", it) }
+            "snow_forecast" -> Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("市町村コード", cond["code"].orEmpty(), Modifier.weight(1f), placeholder = "tenkawa") { set("code", it) }; LabeledField("降雪しきい値（cm/48h）", cond["thresholdCm"].orEmpty(), Modifier.weight(1f), true) { set("thresholdCm", it) } }
+            "stale_data" -> LabeledField("未更新とみなす分数", cond["minutes"].orEmpty(), number = true) { set("minutes", it) }
+            "vehicle_running" -> LabeledField("車両番号（車両名）", cond["vehicle"].orEmpty(), placeholder = "奈良200か115") { set("vehicle", it) }
+            "route_running" -> LabeledField("系統", cond["route"].orEmpty(), placeholder = "1") { set("route", it) }
             "shoot_window" -> {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("緯度", cond["lat"].orEmpty(), Modifier.weight(1f), true, "34.685") { set("lat", it) }; F("経度", cond["lon"].orEmpty(), Modifier.weight(1f), true, "135.805") { set("lon", it) } }
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("撮影方位（度・北0）", cond["heading"].orEmpty(), Modifier.weight(1f), true) { set("heading", it) }; F("撮影適性スコアのしきい値", cond["minScore"].orEmpty(), Modifier.weight(1f), true) { set("minScore", it) } }
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("緯度", cond["lat"].orEmpty(), Modifier.weight(1f), true, "34.685") { set("lat", it) }; LabeledField("経度", cond["lon"].orEmpty(), Modifier.weight(1f), true, "135.805") { set("lon", it) } }
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("撮影方位（度・北0）", cond["heading"].orEmpty(), Modifier.weight(1f), true) { set("heading", it) }; LabeledField("撮影適性スコアのしきい値", cond["minScore"].orEmpty(), Modifier.weight(1f), true) { set("minScore", it) } }
             }
         }
         Text("実行する処理", fontSize = 11.sp, fontWeight = FontWeight.Bold)
@@ -353,7 +349,7 @@ fun AutomationMonitorScreen() {
             item {
                 val rdv = runDays ?: (data.int("retention.runDays") ?: 365).toString(); val ldv = logDays ?: (data.int("retention.logDays") ?: 180).toString()
                 Panel(title = "保存期間の目安") {
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("運行記録・位置履歴（日）", rdv, Modifier.weight(1f), true) { runDays = it }; F("ログ（日）", ldv, Modifier.weight(1f), true) { logDays = it } }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("運行記録・位置履歴（日）", rdv, Modifier.weight(1f), true) { runDays = it }; LabeledField("ログ（日）", ldv, Modifier.weight(1f), true) { logDays = it } }
                     SmallButton("保存する", {
                         scope.guarded({ busy = it }, "retention", ::fail, "保存できませんでした") { message = null; Api.rpc("automation/server-fns#saveRetentionSettings", jsonOf("runDays" to (rdv.toIntOrNull() ?: 365).coerceIn(30, 3650), "logDays" to (ldv.toIntOrNull() ?: 180).coerceIn(7, 3650))); message = "保存期間の目安を保存しました（自動削除は行いません）" to false; load.reload() }
                     }, enabled = busy != "retention" && isAdmin, icon = Icons.Outlined.Save)

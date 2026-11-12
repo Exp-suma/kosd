@@ -2,6 +2,7 @@ package app.narabuspulse.ui.kit
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -133,3 +134,9 @@ fun SmallButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier
         }
     }
 }
+
+/** ラベル付きの1行入力（数値入力は number = true）。 */
+@Composable
+fun LabeledField(label: String, value: String, modifier: Modifier = Modifier.fillMaxWidth(), number: Boolean = false, placeholder: String = "", onChange: (String) -> Unit) =
+    androidx.compose.material3.OutlinedTextField(value, onChange, label = { Text(label, fontSize = 10.sp) }, placeholder = { Text(placeholder, fontSize = 12.sp) }, singleLine = true, modifier = modifier,
+        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = if (number) androidx.compose.ui.text.input.KeyboardType.Decimal else androidx.compose.ui.text.input.KeyboardType.Text))

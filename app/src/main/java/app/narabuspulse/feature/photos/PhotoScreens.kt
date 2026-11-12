@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AutoAwesome
@@ -41,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
@@ -70,6 +68,7 @@ import app.narabuspulse.nav.LocalNav
 import app.narabuspulse.ui.kit.ChipRow
 import app.narabuspulse.ui.kit.DateField
 import app.narabuspulse.ui.kit.KeyValue
+import app.narabuspulse.ui.kit.LabeledField
 import app.narabuspulse.ui.kit.Panel
 import app.narabuspulse.ui.kit.ScreenList
 import app.narabuspulse.ui.kit.SelectField
@@ -81,14 +80,14 @@ import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
 import coil3.compose.AsyncImage
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private val TABS = listOf("/photos" to "撮影データベース", "/photos/learning" to "設定学習・地点実績")
 private val RATINGS = listOf("favorite" to "お気に入り", "success" to "成功", "failed" to "失敗", "none" to "未評価")
@@ -129,8 +128,6 @@ private fun readExif(bytes: ByteArray): Exif {
 
 private fun nowJst() = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
 
-@Composable private fun F(label: String, value: String, modifier: Modifier = Modifier, placeholder: String = "", number: Boolean = false, onChange: (String) -> Unit) =
-    OutlinedTextField(value, onChange, label = { Text(label, fontSize = 10.sp) }, placeholder = { Text(placeholder, fontSize = 12.sp) }, singleLine = true, modifier = modifier, keyboardOptions = KeyboardOptions(keyboardType = if (number) KeyboardType.Decimal else KeyboardType.Text))
 
 /** 写真を登録（Web: PhotoUploadCard.jsx） */
 @OptIn(ExperimentalLayoutApi::class)
@@ -157,11 +154,11 @@ private fun PhotoUploadCard(onSaved: () -> Unit) {
             SmallButton(if (file != null) "写真を選び直す（${file!!.second.size / 1024}KB）" else "写真（JPEG）を選ぶ", { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, icon = Icons.Outlined.Image)
             DateField(date, { date = it }, label = "撮影日"); TimeField(time, { time = it }, label = "時刻（JST）")
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("撮影地点", v("place_name"), Modifier.weight(1f), "例 奈良駅前") { patch("place_name", it) }; F("車両番号", v("vehicle"), Modifier.weight(1f), "例 奈良200か115") { patch("vehicle", it) } }
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("系統", v("route"), Modifier.weight(1f), "例 1") { patch("route", it) }; F("行先", v("destination"), Modifier.weight(1f)) { patch("destination", it) } }
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("天気（手入力）", v("weather"), Modifier.weight(1f), "例 晴れ / 雪") { patch("weather", it) }; F("気温（℃・手入力）", v("temperature"), Modifier.weight(1f), number = true) { patch("temperature", it) } }
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("撮影地点", v("place_name"), Modifier.weight(1f), placeholder = "例 奈良駅前") { patch("place_name", it) }; LabeledField("車両番号", v("vehicle"), Modifier.weight(1f), placeholder = "例 奈良200か115") { patch("vehicle", it) } }
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("系統", v("route"), Modifier.weight(1f), placeholder = "例 1") { patch("route", it) }; LabeledField("行先", v("destination"), Modifier.weight(1f)) { patch("destination", it) } }
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("天気（手入力）", v("weather"), Modifier.weight(1f), placeholder = "例 晴れ / 雪") { patch("weather", it) }; LabeledField("気温（℃・手入力）", v("temperature"), Modifier.weight(1f), number = true) { patch("temperature", it) } }
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { SelectField(DIRECTION, v("shot_direction"), { patch("shot_direction", it) }, label = "撮影方向"); SelectField(STYLE, v("shooting_style"), { patch("shooting_style", it) }, label = "撮影スタイル") }
-        F("メモ", v("notes"), Modifier.fillMaxWidth()) { patch("notes", it) }
+        LabeledField("メモ", v("notes"), Modifier.fillMaxWidth()) { patch("notes", it) }
         exif?.let { x ->
             Text(if (x.found) "EXIFから取得: ${listOfNotNull(x.camera, x.lens, x.focal?.let { "${it}mm" }, x.shutter, x.aperture?.let { "F$it" }, x.iso?.let { "ISO$it" }, x.bias?.let { "${it}EV" }, if (x.lat != null && x.lon != null) "GPSあり" else null).joinToString(" / ")}"
                 else "EXIFを取得できませんでした（${x.reason}）。日時・車両・地点を入力してください。", fontSize = 11.sp, color = if (x.found) MaterialTheme.colorScheme.onSurfaceVariant else Brand.Warning)
@@ -350,7 +347,7 @@ fun PhotoLearningScreen() {
             item {
                 Panel(title = "登録機材") {
                     fun g(k: String) = gear[k].orEmpty()
-                    @Composable fun G(label: String, key: String, ph: String, m: Modifier, number: Boolean = false) = F(label, g(key), m, ph, number) { gear = gear + (key to it) }
+                    @Composable fun G(label: String, key: String, ph: String, m: Modifier, number: Boolean = false) = LabeledField(label, g(key), m, number, ph) { gear = gear + (key to it) }
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { G("カメラ名", "name", "α7 IV", Modifier.weight(1f)); G("レンズ", "lens", "70-200mm F2.8", Modifier.weight(1f)) }
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { G("センサー", "sensor", "フルサイズ", Modifier.weight(1f)); G("焦点距離 下限", "focal_min", "24", Modifier.weight(1f), true); G("焦点距離 上限", "focal_max", "200", Modifier.weight(1f), true) }
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { G("開放F値", "aperture_min", "2.8", Modifier.weight(1f), true); G("常用ISO上限", "iso_max", "12800", Modifier.weight(1f), true); G("最短シャッター", "shutter_min", "1/4000", Modifier.weight(1f)) }

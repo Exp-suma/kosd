@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import app.narabuspulse.core.Api
+import app.narabuspulse.core.JST
 import app.narabuspulse.core.Json
 import app.narabuspulse.core.Logic
 import app.narabuspulse.core.int
@@ -32,15 +33,13 @@ import app.narabuspulse.feature.bus.parseOperation
 import app.narabuspulse.feature.bus.rememberRoadPaths
 import app.narabuspulse.feature.bus.rememberStopCoords
 import app.narabuspulse.ui.kit.userMessage
+import java.time.Instant
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import java.time.Instant
-import java.time.ZoneId
 
-private val JST = ZoneId.of("Asia/Tokyo")
 internal fun jstToday(): String = Instant.now().atZone(JST).toLocalDate().toString()
 internal fun jstNowTime(): String = Instant.now().atZone(JST).toLocalTime().toString().take(5)
 internal fun hhmm(minutes: Int): String { val c = minutes.coerceIn(0, 1439); return "%02d:%02d".format(c / 60, c % 60) }

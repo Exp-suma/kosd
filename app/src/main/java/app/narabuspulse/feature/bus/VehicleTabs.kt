@@ -21,8 +21,8 @@ import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Route
 import androidx.compose.material.icons.outlined.SkipNext
@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Logic
+import app.narabuspulse.core.at
 import app.narabuspulse.core.bool
 import app.narabuspulse.core.dbl
 import app.narabuspulse.core.int
@@ -57,8 +58,8 @@ import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.list
 import app.narabuspulse.core.long
 import app.narabuspulse.core.str
-import app.narabuspulse.core.at
 import app.narabuspulse.core.text
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.ui.kit.DateField
 import app.narabuspulse.ui.kit.KeyValue
 import app.narabuspulse.ui.kit.MapLine
@@ -75,7 +76,6 @@ import app.narabuspulse.ui.theme.Brand
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.JsonElement
 
-private val INFO = Color(0xFF2F6FB0)
 
 @Composable
 private fun StateBadge(state: VehicleState?) { if (state != null) Tag(state.label, state.color) else Tag("—", Brand.MutedFg) }

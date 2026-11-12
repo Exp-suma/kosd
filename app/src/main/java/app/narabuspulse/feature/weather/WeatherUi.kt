@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AcUnit
 import androidx.compose.material.icons.outlined.Cloud
+import androidx.compose.material.icons.outlined.Dehaze
 import androidx.compose.material.icons.outlined.Grain
 import androidx.compose.material.icons.outlined.Thunderstorm
+import androidx.compose.material.icons.outlined.Water
 import androidx.compose.material.icons.outlined.WbCloudy
 import androidx.compose.material.icons.outlined.WbSunny
-import androidx.compose.material.icons.outlined.Water
-import androidx.compose.material.icons.outlined.Dehaze
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Logic
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.ui.theme.Brand
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -44,7 +45,6 @@ fun weatherKind(code: Int?): String = when {
     else -> "thunder"
 }
 
-private val INFO = Color(0xFF2F6FB0)
 
 fun weatherIcon(code: Int?): Pair<ImageVector, Color> = when (weatherKind(code)) {
     "sun" -> Icons.Outlined.WbSunny to Brand.Warning

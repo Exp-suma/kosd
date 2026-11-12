@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
 import app.narabuspulse.core.Export
+import app.narabuspulse.core.JST
 import app.narabuspulse.core.Logic
 import app.narabuspulse.core.bool
 import app.narabuspulse.core.items
@@ -66,18 +67,16 @@ import app.narabuspulse.ui.kit.SmallButton
 import app.narabuspulse.ui.kit.Tag
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 private val TABS = listOf("/wifi" to "接続と画像一覧", "/wifi/history" to "転送履歴・検証", "/wifi/setup" to "ブリッジ設定・対応表")
-private val JST = ZoneId.of("Asia/Tokyo")
 
 @Composable
 private fun WifiScaffold(current: String, content: LazyListScope.() -> Unit) {

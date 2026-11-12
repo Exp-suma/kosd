@@ -27,7 +27,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,6 +42,7 @@ import app.narabuspulse.core.long
 import app.narabuspulse.core.objAt
 import app.narabuspulse.core.rememberNotifyPermission
 import app.narabuspulse.core.str
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.bus.BusFormat
 import app.narabuspulse.feature.push.PushStatusCard
 import app.narabuspulse.ui.kit.DateField
@@ -59,7 +59,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 
-private val INFO = Color(0xFF2F6FB0)
 
 private fun liveColor(state: String?) = when (state) {
     "at_stop", "approaching" -> Brand.Success

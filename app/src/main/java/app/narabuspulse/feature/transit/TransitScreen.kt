@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
+import app.narabuspulse.core.JST
 import app.narabuspulse.core.bool
 import app.narabuspulse.core.dbl
 import app.narabuspulse.core.int
@@ -73,6 +74,8 @@ import app.narabuspulse.ui.kit.TimeField
 import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
+import java.time.Instant
+import java.time.LocalDate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -80,11 +83,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
-private val JST = ZoneId.of("Asia/Tokyo")
 private val TYPE_LABEL = mapOf("departure" to "出発", "arrival" to "到着", "first" to "始発", "last" to "終電")
 private val TYPE_CHOICES = listOf("departure" to "出発時刻", "arrival" to "到着時刻", "first" to "始発", "last" to "終電")
 private val SORT_CHOICES = listOf("arrival" to "到着が早い順", "departure" to "出発が早い順", "duration" to "所要時間が短い順", "transfers" to "乗換が少ない順", "walk" to "徒歩が短い順", "fare" to "運賃が安い順")

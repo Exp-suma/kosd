@@ -45,6 +45,7 @@ import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.long
 import app.narabuspulse.core.objAt
 import app.narabuspulse.core.str
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.bus.StopTimelineSheet
 import app.narabuspulse.feature.bus.Vehicle
 import app.narabuspulse.nav.LocalNav
@@ -61,11 +62,10 @@ import app.narabuspulse.ui.kit.StatTile
 import app.narabuspulse.ui.kit.Tag
 import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.theme.Brand
+import java.text.Normalizer
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.JsonElement
-import java.text.Normalizer
 
-private val INFO = Color(0xFF2F6FB0)
 
 /** 全車両マップ（Web: src/routes/_authed/all-vehicles.jsx） */
 @OptIn(ExperimentalLayoutApi::class)

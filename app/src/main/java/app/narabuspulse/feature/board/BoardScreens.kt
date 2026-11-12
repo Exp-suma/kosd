@@ -25,8 +25,8 @@ import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.EditNote
-import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Share
@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
+import app.narabuspulse.core.JST
 import app.narabuspulse.core.bool
 import app.narabuspulse.core.dbl
 import app.narabuspulse.core.int
@@ -85,6 +86,9 @@ import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
 import coil3.compose.AsyncImage
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -92,17 +96,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 val CATEGORY_OPTIONS = listOf("sighting" to "車両目撃情報", "vehicle_info" to "車両情報", "new_vehicle" to "新車・導入情報", "retire" to "廃車・除籍情報", "transfer" to "転属・配置変更", "operation" to "運用情報", "route" to "ダイヤ・路線情報", "photo" to "撮影情報", "other" to "その他")
 private val CATEGORY_COLOR = mapOf("sighting" to INFO, "vehicle_info" to Brand.Success, "new_vehicle" to PURPLE, "retire" to Brand.Destructive, "transfer" to Brand.Orange, "operation" to Brand.Warning, "photo" to PURPLE)
 val VERIFY_LABEL = mapOf("unverified" to "未確認", "reported" to "投稿者による報告", "agreed" to "複数投稿で一致", "confirmed" to "管理者確認済み", "conflict" to "情報が矛盾", "stale" to "古い情報", "retracted" to "取り消し")
 private val VERIFY_COLOR = mapOf("reported" to INFO, "agreed" to PURPLE, "confirmed" to Brand.Success, "conflict" to Brand.Destructive, "stale" to Brand.Warning)
 private val SORTS = listOf("new" to "新着順", "popular" to "人気順", "comments" to "コメント順")
-private val JST = ZoneId.of("Asia/Tokyo")
 private val DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(JST)
 
 @Composable fun VerifyBadge(status: String?) = Tag(VERIFY_LABEL[status ?: "reported"] ?: "未確認", VERIFY_COLOR[status ?: "reported"] ?: Brand.MutedFg)

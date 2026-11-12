@@ -64,6 +64,7 @@ import app.narabuspulse.feature.data.Heading
 import app.narabuspulse.nav.LocalNav
 import app.narabuspulse.ui.kit.BarChart
 import app.narabuspulse.ui.kit.ChipRow
+import app.narabuspulse.ui.kit.LabeledField
 import app.narabuspulse.ui.kit.LineChart
 import app.narabuspulse.ui.kit.LocalSnackbar
 import app.narabuspulse.ui.kit.MapLine
@@ -79,13 +80,13 @@ import app.narabuspulse.ui.kit.Tag
 import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
+import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
-import kotlin.math.abs
-import kotlin.math.roundToInt
 
 private val TABS = listOf("/terrain" to "地形概要", "/terrain/hazards" to "狭隘・難所マップ", "/terrain/compare" to "路線比較", "/terrain/ai" to "AI地形分析")
 private val HAZARD_LABELS = linkedMapOf("steep" to "急勾配", "sharp_curve" to "急カーブ", "hairpin" to "ヘアピンカーブ", "narrow" to "狭隘区間", "narrow_candidate" to "狭隘の可能性", "pass" to "峠・最高地点", "tunnel" to "トンネル", "bridge" to "橋梁", "turning" to "転回場所", "other" to "その他")
@@ -369,8 +370,6 @@ fun TerrainHazardsScreen() {
     }
 }
 
-@Composable private fun F(label: String, value: String, modifier: Modifier = Modifier.fillMaxWidth(), number: Boolean = false, onChange: (String) -> Unit) =
-    OutlinedTextField(value, onChange, label = { Text(label, fontSize = 10.sp) }, singleLine = true, modifier = modifier, keyboardOptions = KeyboardOptions(keyboardType = if (number) KeyboardType.Decimal else KeyboardType.Text))
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -391,16 +390,16 @@ private fun HazardForm(routeName: String, point: Pair<Double, Double>?, hazard: 
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         SelectField(HAZARD_LABELS.toList(), type, { type = it }, label = "種類"); SelectField(SEVERITY.toList(), severity, { severity = it }, label = "難易度（参考）"); SelectField(VERIFICATION.toList(), status, { status = it }, label = "確認状態")
     }
-    F("名称（不明なら空欄）", name) { name = it }
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("幅員（m）", width, Modifier.weight(1f), true) { width = it }; F("幅員の出典", widthSource, Modifier.weight(1f)) { widthSource = it } }
-    F("説明・根拠", description) { description = it }
+    LabeledField("名称（不明なら空欄）", name) { name = it }
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("幅員（m）", width, Modifier.weight(1f), true) { width = it }; LabeledField("幅員の出典", widthSource, Modifier.weight(1f)) { widthSource = it } }
+    LabeledField("説明・根拠", description) { description = it }
     Text("現地調査（任意）", fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        F("実測幅員（m）", measured, Modifier.padding(0.dp), true) { measured = it }
+        LabeledField("実測幅員（m）", measured, Modifier.padding(0.dp), true) { measured = it }
         SelectField(listOf("unknown" to "未確認", "yes" to "可能", "difficult" to "困難", "no" to "不可"), passing, { passing = it }, label = "すれ違い可否")
         SelectField(listOf("unknown" to "未確認", "yes" to "通行あり", "caution" to "注意", "no" to "通行なし"), large, { large = it }, label = "大型車の通行")
     }
-    F("舗装・路面", surface) { surface = it }; F("調査メモ・調査者", notes) { notes = it }
+    LabeledField("舗装・路面", surface) { surface = it }; LabeledField("調査メモ・調査者", notes) { notes = it }
     Row(verticalAlignment = Alignment.CenterVertically) { SmallButton("写真を追加（非公開ストレージ）", { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !busy); if (photo.isNotBlank()) Muted("  添付済み", 10) }
     if (error.isNotBlank()) Text(error, fontSize = 11.sp, color = Brand.Destructive)
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -438,9 +437,9 @@ private fun FacilityForm(routeName: String, point: Pair<Double, Double>?, facili
         SelectField(FACILITY_LABELS.toList(), type, { type = it }, label = "種類"); SelectField(VERIFICATION.toList(), status, { status = it }, label = "確認状態")
         SelectField(listOf("unknown" to "未確認", "loop" to "周回", "yard" to "構内", "back" to "切り返し"), turn, { turn = it }, label = "転回方法")
     }
-    F("名称", name) { name = it }
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { F("面積（㎡）", area, Modifier.weight(1f), true) { area = it }; F("車両の制約", constraints, Modifier.weight(1f)) { constraints = it } }
-    F("説明", description) { description = it }; F("メモ", notes) { notes = it }
+    LabeledField("名称", name) { name = it }
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { LabeledField("面積（㎡）", area, Modifier.weight(1f), true) { area = it }; LabeledField("車両の制約", constraints, Modifier.weight(1f)) { constraints = it } }
+    LabeledField("説明", description) { description = it }; LabeledField("メモ", notes) { notes = it }
     if (error.isNotBlank()) Text(error, fontSize = 11.sp, color = Brand.Destructive)
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         SmallButton("閉じる", onCancel)

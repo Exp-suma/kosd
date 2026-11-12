@@ -35,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -50,6 +49,7 @@ import app.narabuspulse.core.long
 import app.narabuspulse.core.objAt
 import app.narabuspulse.core.str
 import app.narabuspulse.core.text
+import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.nav.LocalNav
 import app.narabuspulse.ui.kit.EmptyState
 import app.narabuspulse.ui.kit.Panel
@@ -64,7 +64,6 @@ import app.narabuspulse.ui.theme.Brand
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 
-private val INFO = Color(0xFF2F6FB0)
 
 /** 車番検索（Web: src/routes/_authed/fleet.index.jsx） */
 @OptIn(ExperimentalLayoutApi::class)
