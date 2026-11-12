@@ -43,7 +43,6 @@ import app.narabuspulse.core.objAt
 import app.narabuspulse.core.str
 import app.narabuspulse.core.text
 import app.narabuspulse.feature.analytics.ErrorText
-import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.analytics.Muted
 import app.narabuspulse.feature.predict.MiniHeader
 import app.narabuspulse.nav.LocalNav

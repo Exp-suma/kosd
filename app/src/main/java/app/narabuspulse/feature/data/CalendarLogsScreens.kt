@@ -1,6 +1,5 @@
 package app.narabuspulse.feature.data
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -54,7 +52,6 @@ import app.narabuspulse.core.items
 import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.list
 import app.narabuspulse.core.objAt
-import app.narabuspulse.core.str
 import app.narabuspulse.core.text
 import app.narabuspulse.feature.bus.BusFormat
 import app.narabuspulse.feature.bus.BusGate

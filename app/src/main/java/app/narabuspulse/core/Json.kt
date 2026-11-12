@@ -24,7 +24,6 @@ object Json {
 }
 
 val JsonElement?.obj: JsonObject? get() = this as? JsonObject
-val JsonElement?.arr: JsonArray? get() = this as? JsonArray
 
 /** "a.b.c" のようなドット区切りで入れ子を辿る。 */
 fun JsonElement?.at(path: String): JsonElement? {

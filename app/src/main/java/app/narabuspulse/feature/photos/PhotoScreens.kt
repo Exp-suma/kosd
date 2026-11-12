@@ -85,7 +85,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.JsonElement
 import java.io.ByteArrayInputStream
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -93,7 +92,6 @@ import kotlin.math.roundToInt
 
 private val TABS = listOf("/photos" to "撮影データベース", "/photos/learning" to "設定学習・地点実績")
 private val RATINGS = listOf("favorite" to "お気に入り", "success" to "成功", "failed" to "失敗", "none" to "未評価")
-private val RATING_COLOR = mapOf("favorite" to Brand.Warning, "success" to Brand.Success, "failed" to Brand.Destructive, "none" to Brand.MutedFg)
 private val DIRECTION = listOf("front" to "正面", "side" to "側面", "rear" to "後面", "other" to "その他")
 private val STYLE = listOf("static" to "止め", "panning" to "流し撮り", "night" to "夜景", "other" to "その他")
 

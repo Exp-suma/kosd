@@ -1,0 +1,27 @@
+{
+  "name": "nara-bus-pulse-desktop",
+  "productName": "バスロケ監視",
+  "version": "3.1.0",
+  "description": "バスロケ監視（奈良交通 運行管理）Windows デスクトップ版",
+  "author": "nara-bus-pulse",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "app.narabuspulse.desktop",
+    "productName": "バスロケ監視",
+    "artifactName": "NaraBusPulse-${version}-win-x64.${ext}",
+    "files": ["main.js", "offline.html", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": [{ "target": "portable", "arch": ["x64"] }], "signAndEditExecutable": false },
+    "portable": { "artifactName": "NaraBusPulse-${version}-win-x64.exe" }
+  }
+}

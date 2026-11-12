@@ -1,8 +1,6 @@
 package app.narabuspulse.ui.kit
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -11,14 +9,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import app.narabuspulse.core.Api
 import app.narabuspulse.core.ApiException
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import java.io.IOException
 
@@ -70,51 +64,3 @@ fun <T> rememberLoad(vararg keys: Any?, block: suspend () -> T): LoadState<T> {
 fun rememberRpc(fn: String, data: JsonElement? = null, vararg keys: Any?): LoadState<JsonElement> =
     rememberLoad(fn, data?.toString(), *keys) { Api.rpc(fn, data) }
 
-/** 読み込み中・エラー・本体の出し分け（引っ張って更新つき）。 */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun <T> LoadContent(
-    state: LoadState<T>,
-    modifier: Modifier = Modifier,
-    content: @Composable (T) -> Unit,
-) {
-    val data = state.data
-    PullToRefreshBox(isRefreshing = state.loading && data != null, onRefresh = { state.reload() }, modifier = modifier) {
-        when {
-            data != null -> content(data)
-            state.error != null -> ErrorBox(state.error!!, onRetry = { state.reload() })
-            else -> Loading()
-        }
-    }
-}
-
-/** ボタン操作など、1 回きりの処理を実行して結果をスナックバーに出す。 */
-class Action(private val scope: CoroutineScope, private val snackbar: SnackbarHostState) {
-    var running by mutableStateOf(false)
-        private set
-
-    fun run(success: String? = null, onDone: (suspend () -> Unit)? = null, block: suspend () -> Unit) {
-        if (running) return
-        scope.launch {
-            running = true
-            try {
-                block()
-                if (success != null) snackbar.showSnackbar(success)
-                onDone?.invoke()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                snackbar.showSnackbar(e.userMessage())
-            } finally {
-                running = false
-            }
-        }
-    }
-}
-
-@Composable
-fun rememberAction(): Action {
-    val scope = rememberCoroutineScope()
-    val snackbar = LocalSnackbar.current
-    return remember(scope, snackbar) { Action(scope, snackbar) }
-}

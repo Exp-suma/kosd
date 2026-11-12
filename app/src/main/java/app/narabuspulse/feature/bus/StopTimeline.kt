@@ -62,7 +62,6 @@ import app.narabuspulse.ui.theme.Brand
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 
 private data class RouteOrder(
     val stops: List<JsonElement> = emptyList(),

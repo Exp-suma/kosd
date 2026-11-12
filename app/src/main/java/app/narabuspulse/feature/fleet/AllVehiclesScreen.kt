@@ -43,7 +43,6 @@ import app.narabuspulse.core.int
 import app.narabuspulse.core.items
 import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.long
-import app.narabuspulse.core.obj
 import app.narabuspulse.core.objAt
 import app.narabuspulse.core.str
 import app.narabuspulse.feature.bus.StopTimelineSheet
@@ -64,7 +63,6 @@ import app.narabuspulse.ui.kit.rememberLoad
 import app.narabuspulse.ui.theme.Brand
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
 import java.text.Normalizer
 
 private val INFO = Color(0xFF2F6FB0)

@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
-import app.narabuspulse.core.Logic
 import app.narabuspulse.core.bool
 import app.narabuspulse.core.dbl
 import app.narabuspulse.core.int
@@ -55,11 +54,9 @@ import app.narabuspulse.core.str
 import app.narabuspulse.core.text
 import app.narabuspulse.feature.analytics.Col
 import app.narabuspulse.feature.analytics.DataTable
-import app.narabuspulse.feature.analytics.ErrorText
 import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.analytics.Muted
 import app.narabuspulse.feature.data.Heading
-import app.narabuspulse.feature.data.jstTodayKey
 import app.narabuspulse.feature.predict.PURPLE
 import app.narabuspulse.nav.LocalNav
 import app.narabuspulse.ui.kit.DateField

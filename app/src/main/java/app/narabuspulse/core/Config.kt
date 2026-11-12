@@ -13,7 +13,4 @@ object Config {
 
     val apiBase = "$BASE_URL/api/apps/$APP_ID"
 
-    fun googleLoginUrl(): String =
-        "$BASE_URL/api/apps/auth/login?app_id=$APP_ID&from_url=" +
-            java.net.URLEncoder.encode(AUTH_CALLBACK_URL, "UTF-8")
 }

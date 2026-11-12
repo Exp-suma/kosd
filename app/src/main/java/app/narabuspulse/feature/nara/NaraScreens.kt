@@ -16,14 +16,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.OpenInNew
-import androidx.compose.material.icons.outlined.Radio
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.SwapVert
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,7 +35,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.narabuspulse.core.Api
@@ -49,16 +43,12 @@ import app.narabuspulse.core.dbl
 import app.narabuspulse.core.int
 import app.narabuspulse.core.items
 import app.narabuspulse.core.jsonOf
-import app.narabuspulse.core.list
-import app.narabuspulse.core.long
 import app.narabuspulse.core.objAt
 import app.narabuspulse.core.str
 import app.narabuspulse.core.text
 import app.narabuspulse.feature.analytics.ErrorText
 import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.analytics.Muted
-import app.narabuspulse.feature.analytics.fmtNum
-import app.narabuspulse.feature.bus.BusFormat
 import app.narabuspulse.feature.data.Heading
 import app.narabuspulse.feature.data.jstTodayKey
 import app.narabuspulse.feature.predict.MiniHeader
@@ -75,7 +65,6 @@ import app.narabuspulse.ui.kit.ScreenList
 import app.narabuspulse.ui.kit.SmallButton
 import app.narabuspulse.ui.kit.StatTile
 import app.narabuspulse.ui.kit.Tag
-import app.narabuspulse.ui.kit.TimeField
 import app.narabuspulse.ui.kit.userMessage
 import app.narabuspulse.ui.theme.Brand
 import kotlinx.coroutines.CancellationException
@@ -144,11 +133,6 @@ fun StopPicker(label: String, value: StopRef?, onChange: (StopRef?) -> Unit, pla
             }
         }
     }
-}
-
-@Composable
-private fun Seg(options: List<Pair<String, String>>, value: String, onChange: (String) -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) { options.forEach { (v, l) -> FilterChip(value == v, { onChange(v) }, label = { Text(l, fontSize = 11.sp) }) } }
 }
 
 /** 停留所（のりば）の実座標のみを描く地図（Web: StopMap.jsx） */

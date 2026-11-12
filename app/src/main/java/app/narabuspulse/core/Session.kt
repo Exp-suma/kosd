@@ -29,8 +29,6 @@ object Session {
         }
     }
 
-    val isSignedIn: Boolean get() = !_token.value.isNullOrBlank()
-
     val isAdmin: Boolean get() = _user.value?.str("role") == "admin"
 
     fun setToken(token: String) {
@@ -51,11 +49,4 @@ object Session {
         _user.value = null
     }
 
-    /** 端末ごとの識別子（ゲスト投稿や通知の購読で使う）。 */
-    fun deviceKey(context: Context): String {
-        val p = context.getSharedPreferences("device", Context.MODE_PRIVATE)
-        return p.getString("key", null) ?: java.util.UUID.randomUUID().toString().replace("-", "").also {
-            p.edit().putString("key", it).apply()
-        }
-    }
 }

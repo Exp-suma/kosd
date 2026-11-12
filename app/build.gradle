@@ -12,8 +12,8 @@ android {
         applicationId 'app.narabuspulse'
         minSdk 26
         targetSdk 37
-        versionCode 10
-        versionName '3.0.0'
+        versionCode 11
+        versionName '3.1.0'
         buildConfigField 'String', 'BASE_URL', '"https://nara-bus-pulse.base44.app"'
     }
 
@@ -35,9 +35,17 @@ android {
             // 開発用：DEV_BASE_URL で接続先を公開前のプレビューに切り替えられる（リリース版は常に本番）
             def devBase = System.getenv('DEV_BASE_URL')
             if (devBase) buildConfigField 'String', 'BASE_URL', "\"${devBase}\""
+            // 開発用：DEV_MINIFY=1 でリリース版と同じコード縮小（R8）をかけて動作確認できる
+            if (System.getenv('DEV_MINIFY')) {
+                minifyEnabled true
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            }
         }
         release {
-            minifyEnabled false
+            // 使っていないコード・リソースを取り除く（アイコン集などが大きいため、APK が大幅に小さくなる）
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig ks ? signingConfigs.release : signingConfigs.debug
         }
     }

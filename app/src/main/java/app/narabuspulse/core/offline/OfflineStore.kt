@@ -13,7 +13,6 @@ import app.narabuspulse.core.int
 import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.list
 import app.narabuspulse.core.long
-import app.narabuspulse.core.obj
 import app.narabuspulse.core.str
 import app.narabuspulse.core.toJson
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +29,6 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 import java.io.File
 import java.util.UUID
 
@@ -148,7 +146,6 @@ object OfflineStore {
     private fun JsonObject.with(vararg pairs: Pair<String, Any?>): JsonObject = JsonObject(this + pairs.map { it.first to toJson(it.second) })
 
     fun getRecord(id: String): JsonObject? = _records.value.firstOrNull { it.str("id") == id }
-    fun listRecords(): List<JsonObject> = _records.value.sortedByDescending { it.long("createdAt") ?: 0 }
 
     private suspend fun putRecord(r: JsonObject) = mutate { list -> val i = list.indexOfFirst { it.str("id") == r.str("id") }; if (i >= 0) list[i] = r else list.add(r) }
     private suspend fun removeRecordHard(id: String) {
@@ -418,8 +415,6 @@ object OfflineStore {
         File(partsDir, "$key.json").writeText(part.toString())
         _parts.value = (_parts.value.filter { it.str("key") != key } + part).sortedByDescending { it.long("savedAt") ?: 0 }
     }
-
-    suspend fun removePart(key: String) = withContext(Dispatchers.IO) { File(partsDir, "$key.json").delete(); _parts.value = _parts.value.filter { it.str("key") != key } }
 
     suspend fun saveArea(area: JsonObject) = withContext(Dispatchers.IO) {
         val list = (_areas.value.filter { it.str("id") != area.str("id") } + area).sortedByDescending { it.long("savedAt") ?: 0 }

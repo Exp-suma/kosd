@@ -4,8 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -61,7 +59,6 @@ import app.narabuspulse.core.str
 import app.narabuspulse.core.text
 import app.narabuspulse.feature.analytics.Col
 import app.narabuspulse.feature.analytics.DataTable
-import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.analytics.Muted
 import app.narabuspulse.feature.analytics.fmtNum
 import app.narabuspulse.feature.bus.BusFormat

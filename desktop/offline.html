@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>バスロケ監視</title>
+    <style>
+      body { font-family: "Yu Gothic UI", "Meiryo", sans-serif; background: #f1f3f4; color: #1f2937; display: grid; place-items: center; height: 100vh; margin: 0; }
+      main { max-width: 420px; text-align: center; padding: 24px; }
+      h1 { font-size: 18px; }
+      p { font-size: 13px; line-height: 1.8; color: #4b5563; }
+      button { margin-top: 12px; padding: 10px 20px; border: 0; border-radius: 8px; background: #e66116; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>サーバーに接続できません</h1>
+      <p>インターネット接続を確認してから、もう一度お試しください。</p>
+      <p id="reason"></p>
+      <button onclick="location.href = 'https://nara-bus-pulse.base44.app/'">再接続</button>
+    </main>
+    <script>
+      const reason = new URLSearchParams(location.search).get("reason");
+      if (reason) document.getElementById("reason").textContent = "（" + reason + "）";
+    </script>
+  </body>
+</html>

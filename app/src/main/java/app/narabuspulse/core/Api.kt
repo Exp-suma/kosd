@@ -1,9 +1,6 @@
 package app.narabuspulse.core
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -101,25 +98,6 @@ object Api {
         return (res as? JsonObject)?.get("result") ?: JsonNull
     }
 
-    /** ストリームで返すサーバー関数（AIチャットなど）を 1 行ずつ受け取る。 */
-    fun rpcStream(fn: String, data: JsonElement? = null): Flow<JsonElement> = flow {
-        val body = JsonObject(mapOf("fn" to toJson(fn), "data" to (data ?: JsonNull)))
-        val req = Request.Builder().url(Config.RPC_URL).post(jsonBody(body)).build()
-        http.newCall(req).execute().use { res ->
-            val type = res.header("content-type").orEmpty()
-            if (!res.isSuccessful || !type.contains("ndjson")) {
-                val json = res.readJson()
-                emit((json as? JsonObject)?.get("result") ?: json)
-                return@use
-            }
-            val source = res.body.source()
-            while (!source.exhausted()) {
-                val line = source.readUtf8Line() ?: break
-                if (line.isNotBlank()) emit(Json.parse(line))
-            }
-        }
-    }.flowOn(Dispatchers.IO)
-
     // ---------------- 認証 ----------------
 
     suspend fun login(email: String, password: String): JsonElement =
@@ -140,15 +118,9 @@ object Api {
     suspend fun resetPassword(token: String, newPassword: String): JsonElement =
         call(post("${Config.apiBase}/auth/reset-password", jsonOf("reset_token" to token, "new_password" to newPassword), auth = false))
 
-    suspend fun changePassword(userId: String, current: String, new: String): JsonElement =
-        call(post("${Config.apiBase}/auth/change-password", jsonOf("user_id" to userId, "current_password" to current, "new_password" to new)))
-
     suspend fun me(): JsonObject =
         call(Request.Builder().url("${Config.apiBase}/entities/User/me").get().build()) as? JsonObject
             ?: throw ApiException(500, "利用者情報を取得できませんでした")
-
-    suspend fun updateMe(data: JsonObject): JsonElement =
-        call(Request.Builder().url("${Config.apiBase}/entities/User/me").put(jsonBody(data)).build())
 
     // ---------------- エンティティ（SDK の base44.entities.X と同じ） ----------------
 
@@ -162,9 +134,6 @@ object Api {
         return call(Request.Builder().url(url).get().build()).items()
     }
 
-    suspend fun entityGet(entity: String, id: String): JsonElement =
-        call(Request.Builder().url("${Config.apiBase}/entities/$entity/$id").get().build())
-
     suspend fun entityCreate(entity: String, data: JsonObject): JsonElement =
         call(post("${Config.apiBase}/entities/$entity", data))
 
@@ -175,15 +144,6 @@ object Api {
         call(Request.Builder().url("${Config.apiBase}/entities/$entity/$id").delete().build())
 
     // ---------------- ファイル ----------------
-
-    /** 画像などをアップロードして URL を返す（SDK の integrations.Core.UploadFile と同じ）。 */
-    suspend fun uploadFile(fileName: String, mime: String, bytes: ByteArray): String {
-        val body = MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart("file", fileName, bytes.toRequestBody(mime.toMediaType()))
-            .build()
-        val res = call(Request.Builder().url("${Config.apiBase}/integration-endpoints/Core/UploadFile").post(body).build())
-        return res.str("file_url") ?: res.str("url") ?: throw ApiException(500, "アップロードに失敗しました")
-    }
 
     /** 非公開ファイルとしてアップロードして file_uri を返す（SDK の integrations.Core.UploadPrivateFile と同じ）。 */
     suspend fun uploadPrivateFile(fileName: String, mime: String, bytes: ByteArray): String {

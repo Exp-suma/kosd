@@ -6,9 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import app.narabuspulse.core.Api
-import app.narabuspulse.core.dbl
 import app.narabuspulse.core.int
-import app.narabuspulse.core.items
 import app.narabuspulse.core.jsonOf
 import app.narabuspulse.core.list
 import app.narabuspulse.core.long
@@ -39,10 +37,8 @@ object BusFormat {
     fun dateTime(ts: Long?): String = if (ts == null || ts == 0L) "—" else dateTime.format(Instant.ofEpochMilli(ts))
     fun time(ts: Long?): String = if (ts == null || ts == 0L) "—" else time.format(Instant.ofEpochMilli(ts))
     fun dayKey(ts: Long?): String = if (ts == null || ts == 0L) "" else day.format(Instant.ofEpochMilli(ts))
-    fun monthKey(ts: Long?): String = dayKey(ts).take(7)
     fun shortDate(ts: Long?): String = if (ts == null || ts == 0L) "" else shortDate.format(Instant.ofEpochMilli(ts))
     fun weekday(ts: Long?): String = if (ts == null || ts == 0L) "" else weekday.format(Instant.ofEpochMilli(ts))
-    fun isWeekend(ts: Long?): Boolean = weekday(ts) in setOf("土", "日")
 
     fun elapsed(ts: Long?, now: Long = System.currentTimeMillis()): String {
         if (ts == null || ts == 0L) return "記録なし"
@@ -131,7 +127,6 @@ data class Vehicle(
 
 data class OpLog(val row: Int, val at: Long?, val vehicle: String, val kind: String, val from: String, val to: String) {
     val kinds: List<String> get() = logKindLabels(kind)
-    val primaryKind: String get() = logPrimaryKind(kind)
 
     companion object {
         fun from(j: JsonElement) = OpLog(

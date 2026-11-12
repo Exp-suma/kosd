@@ -74,7 +74,6 @@ import app.narabuspulse.ui.kit.TimeField
 import app.narabuspulse.ui.theme.Brand
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonPrimitive
 
 private val INFO = Color(0xFF2F6FB0)
 

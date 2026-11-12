@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,8 +38,6 @@ import app.narabuspulse.core.objAt
 import app.narabuspulse.core.str
 import app.narabuspulse.core.text
 import app.narabuspulse.feature.analytics.Busy
-import app.narabuspulse.feature.analytics.Col
-import app.narabuspulse.feature.analytics.DataTable
 import app.narabuspulse.feature.analytics.ErrorText
 import app.narabuspulse.feature.analytics.INFO
 import app.narabuspulse.feature.analytics.KpiRow
