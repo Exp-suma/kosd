@@ -162,3 +162,13 @@ Web 版 `src/routes/_authed/` の全画面と、ネイティブ版の対応状�
 
 Web 版の `src/lib` の計算は `tools/logic-bundle` で 1 本の JavaScript（`app/src/main/assets/logic.js`）にまとめ、アプリ内の QuickJS で実行します。
 ネイティブ専用のつなぎは `tools/logic-bundle/glue/`（停留所検索・乗換案内・撮影支援・3D シミュレーター・カメラ）にあります。
+
+## カメラ Wi-Fi 接続（CamBridge）
+
+`/camera`（カメラ統合コンソール）の「CamBridge を開く」から、[Exp-suma/APK](https://github.com/Exp-suma/APK) の CamBridge
+（リリース `latest-debug`・コミット `280ef50`）をそのまま開きます。
+
+- ソースは `app/src/main/java/com/example/d750bridge/` に**無変更**で取り込み、別の画面（Activity）として動かしています。
+- 被写体検出のモデル（`efficientdet_lite0.tflite`・`blaze_face_short_range.tflite`）は、元のリポジトリの CI と同じ配布元から取得して `app/src/main/assets/` に入れています。
+- Android 12 以上が必要です（それ未満の端末ではボタンの代わりに案内を表示）。
+- 元のリポジトリを更新したときは、上のフォルダを同じ場所にコピーし直せば反映されます。

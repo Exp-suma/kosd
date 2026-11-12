@@ -322,6 +322,7 @@ fun CameraConsoleScreen() {
                 }
             }
         }
+        item { CamBridgeLauncher() }
         if (cam.manualFocus) item { Panel { Text("⚠ MF（マニュアルフォーカス）です", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Warning); Muted("AFは作動しません。ピントは手動で合わせてください。${cam.focusRow.str("valueText")?.let { "（カメラの現在値: $it）" } ?: ""}", 11) } }
         if (cam.busy.isNotBlank()) item { Muted("⏳ ${cam.busy}", 11) }
         item {
@@ -596,5 +597,18 @@ fun CameraBridgeScreen() {
         item { Panel(title = "ネットワーク情報の返却例", subtitle = "/netinfo は端末自身の情報だけを返します。") { Text(NETINFO_SAMPLE, fontSize = 10.sp, fontFamily = FontFamily.Monospace) } }
         item { Panel(title = "自動検出の返却例", subtitle = "応答しなかった候補は理由つきで返し、カメラとして扱いません。") { Text(DISCOVER_SAMPLE, fontSize = 10.sp, fontFamily = FontFamily.Monospace) } }
         item { Panel(title = "この画面の範囲") { Muted("ここで定めているのはアプリとブリッジの間の契約です。USB接続はこのアプリが USB Host API で直接カメラの PTP を扱います。Wi-Fi接続に使うブリッジのURLとトークンは「Wi-Fi画像転送 → 設定」で入力してください。", 11) } }
+    }
+}
+
+/** カメラ Wi-Fi 接続（CamBridge）を開く。CamBridge はカメラの Wi-Fi に直接つなぐ専用画面で、Android 12 以上が必要。 */
+@Composable
+private fun CamBridgeLauncher() {
+    val context = LocalContext.current
+    Panel(title = "カメラ Wi-Fi 接続（CamBridge）", subtitle = "スマートフォンをカメラの Wi-Fi に直接つなぎ、ライブビュー・リモート撮影・AF・画像の取り込みを行います（Canon / Sony / Nikon / LUMIX）。ブリッジは不要です。") {
+        if (android.os.Build.VERSION.SDK_INT >= 31) {
+            SmallButton("CamBridge を開く", { context.startActivity(android.content.Intent(context, com.example.d750bridge.MainActivity::class.java)) }, icon = Icons.Outlined.Wifi, primary = true)
+        } else {
+            Text("この機能は Android 12 以上で使えます（この端末は Android ${android.os.Build.VERSION.RELEASE}）。下の USB 接続・ブリッジ経由の接続は使えます。", fontSize = 11.sp, color = Brand.Warning)
+        }
     }
 }

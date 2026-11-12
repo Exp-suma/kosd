@@ -12,3 +12,12 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+
+# カメラ Wi-Fi 接続（CamBridge）はそのまま組み込んでいるため縮小の対象外にする
+-keep class com.example.d750bridge.** { *; }
+# MediaPipe（被写体検出）はネイティブ層からクラスを名前で参照する
+-keep class com.google.mediapipe.** { *; }
+-keep class com.google.protobuf.** { *; }
+# MediaPipe が参照するが同梱されていない任意のクラス（R8 が出した一覧）
+-dontwarn com.google.mediapipe.proto.CalculatorProfileProto$CalculatorProfile
+-dontwarn com.google.mediapipe.proto.GraphTemplateProto$CalculatorGraphTemplate

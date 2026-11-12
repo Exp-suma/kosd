@@ -12,8 +12,8 @@ android {
         applicationId 'app.narabuspulse'
         minSdk 26
         targetSdk 37
-        versionCode 11
-        versionName '3.1.0'
+        versionCode 12
+        versionName '3.2.0'
         buildConfigField 'String', 'BASE_URL', '"https://nara-bus-pulse.base44.app"'
     }
 
@@ -47,6 +47,8 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // 実機の CPU（ARM）向けだけを入れる。被写体検出・文字認識のネイティブライブラリが大きいため（エミュレーター用の x86 はデバッグ版のみ）
+            ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
             signingConfig ks ? signingConfigs.release : signingConfigs.debug
         }
     }
@@ -86,6 +88,10 @@ dependencies {
     implementation 'io.coil-kt.coil3:coil-network-okhttp:3.6.2'
     implementation 'io.github.dokar3:quickjs-kt-android:1.0.17'
     implementation 'org.osmdroid:osmdroid-android:6.1.20'
+
+    // カメラ Wi-Fi 接続（CamBridge）：端末内の被写体検出とナンバー読み取り
+    implementation 'com.google.mediapipe:tasks-vision:0.10.18'
+    implementation 'com.google.mlkit:text-recognition-japanese:16.0.1'
 }
 
 // 開発用：環境変数 DEV_PROXY_CA に証明書ファイルがあれば、デバッグ版にだけ組み込む（リポジトリには含めない）。
