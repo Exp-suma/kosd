@@ -1,51 +1,65 @@
-# 奈良バスパルス Android アプリ（TWA）
+# バスロケ監視（奈良交通 運行管理）アプリ
 
-https://nara-bus-pulse.base44.app/ を **Trusted Web Activity (TWA)** として動かす Android アプリです。
-端末の Chrome エンジンでサイトを全画面表示するため、Web 版の機能がそのまま使えます。
+https://nara-bus-pulse.base44.app/ の全機能を使えるアプリです。
 
-- プッシュ通知（「奈良バスパルス」アプリの通知として届く）
-- Google ログイン
-- 現在地、カメラ、ファイル選択、CSV / PDF のダウンロード、共有ボタン
-- サイトのリンク (nara-bus-pulse.base44.app) をこのアプリで開く
+| 種類 | 場所 | 内容 |
+| --- | --- | --- |
+| Android（ネイティブ） | [`app/`](app) | Kotlin + Jetpack Compose で全 142 画面を作り直したアプリ。アプリ内ブラウザは使いません。 |
+| Windows（デスクトップ） | [`desktop/`](desktop) | Web 版を専用ウィンドウで開くアプリ（Electron）。 |
+| サーバー側の窓口 | [`base44-gateway/`](base44-gateway) | ネイティブアプリが Web 版と同じサーバー関数を呼ぶための入口（`/api/native/rpc`）。 |
 
-> Chrome（または TWA 対応ブラウザ）が端末に入っている必要があります。
+画面ごとの対応表は [`docs/PARITY.md`](docs/PARITY.md)、設計は [`docs/NATIVE.md`](docs/NATIVE.md) を参照してください。
 
-## 全画面にするための設定（必須）
-TWA は「このアプリとサイトが同じ持ち主である」ことをサイト側で証明できたときだけ、
-アドレスバーなしの全画面で表示されます。証明できない場合は上部に URL バーが出ます（機能は動きます）。
+## Android アプリ
 
-サイトの `https://nara-bus-pulse.base44.app/.well-known/assetlinks.json` で、
-[`twa/assetlinks.json`](twa/assetlinks.json) の内容をそのまま返すようにしてください。
-（Base44 のエディタ / AI に「`/.well-known/assetlinks.json` で次の JSON を `application/json` で返して」と依頼する）
+- 通信は Web 版と同じサーバー関数を `/api/native/rpc` 経由で呼びます（API キーはアプリに入れていません）。
+- Web 版の計算ロジック（`src/lib`）は 1 本の JavaScript にまとめてアプリ内で実行するため、結果は Web 版と一致します。
+- 地図は OpenStreetMap（osmdroid）、3D シミュレーターは Canvas の透視投影、カメラは Camera2 / USB Host API を使います。
+- リリース版はコード縮小（R8）とリソース縮小を有効にしています（APK 約 7.5MB）。
 
-確認: `https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://nara-bus-pulse.base44.app&relation=delegate_permission/common.handle_all_urls`
-に `app.narabuspulse` が出れば OK。設定後はアプリを一度アンインストールして入れ直すと確実です。
+### 本番で使うための準備（必須）
 
-## 署名鍵（重要）
-`twa/assetlinks.json` のフィンガープリントは、配布用の署名鍵 `nara-bus-pulse-release.jks` のものです。
-**鍵はリポジトリに入れていません。** なくすと同じアプリとして更新できなくなるので、安全な場所に保管してください。
+ネイティブアプリは本番サイトの `/api/native/rpc` を呼びます。Base44 のエディタで **Publish** を押して、
+この窓口を含む版を本番に公開してください。公開前はログイン後の画面でデータを取得できません。
 
-GitHub Actions で同じ鍵を使ってビルドするには、Settings → Secrets and variables → Actions に登録します。
+### ビルド
 
-| Secret | 内容 |
-| --- | --- |
-| `KEYSTORE_BASE64` | `base64 -w0 nara-bus-pulse-release.jks` の出力 |
-| `KEYSTORE_PASSWORD` | キーストアのパスワード |
-| `KEY_ALIAS` | `narabus` |
-| `KEY_PASSWORD` | キーのパスワード（キーストアと同じ） |
+JDK 17 以上と Android SDK（platform 37）を用意します。
 
-Secrets 未登録のビルドはデバッグ鍵で署名されるため、全画面表示にはなりません（URL バー表示）。
+```bash
+# 署名付きリリース版（本番向け）
+KEYSTORE_FILE=... KEYSTORE_PASSWORD=... KEY_ALIAS=narabus KEY_PASSWORD=... ./gradlew assembleRelease
+# → app/build/outputs/apk/release/app-release.apk
 
-## APK の入手
-- GitHub Actions: **Actions → Build APK → 最新の実行 → Artifacts**
-- ローカル: JDK 17 以上と Android SDK (platform 36) を用意して
-  ```bash
-  KEYSTORE_FILE=... KEYSTORE_PASSWORD=... KEY_ALIAS=narabus KEY_PASSWORD=... ./gradlew assembleRelease
-  # → app/build/outputs/apk/release/app-release.apk
-  ```
+# デバッグ版（公開前のプレビューに接続する場合は DEV_BASE_URL を指定）
+DEV_BASE_URL=https://... ./gradlew assembleDebug
+```
 
-## カスタマイズ
-- アプリ名・URL: `app/src/main/res/values/strings.xml`
-- ステータスバーの色: `app/src/main/res/values/colors.xml`
-- アイコン: `app/src/main/res/drawable/ic_launcher_foreground.xml`
-- 通知アイコン: `app/src/main/res/drawable/ic_notification.xml`
+共通ロジック（`app/src/main/assets/logic.js`）は Web 版のソースから作ります。
+
+```bash
+node tools/logic-bundle/build.mjs <Web版のソースのフォルダ> app/src/main/assets/logic.js
+```
+
+### 署名鍵（重要）
+
+配布用の署名鍵 `nara-bus-pulse-release.jks` は**リポジトリに入れていません**。
+なくすと同じアプリとして更新できなくなるので、安全な場所に保管してください。
+環境変数を指定しないビルドはデバッグ鍵で署名されます。
+
+### プッシュ通知（未対応の範囲）
+
+アプリを開いている間の通知（車両通知・雨雲・乗車予定など）は動きます。
+アプリを閉じている間に届くプッシュ通知（Firebase Cloud Messaging）は**まだ組み込んでいません**。
+Firebase プロジェクトの `google-services.json` が必要です。サービスアカウントの JSON は Base44 の Secrets に登録し、
+リポジトリやチャットには貼らないでください。
+
+## Windows アプリ
+
+```bash
+cd desktop
+npm install
+npm run dist   # → desktop/dist/NaraBusPulse-<version>-win-x64.exe（インストール不要）
+```
+
+コード署名はしていないため、初回起動時に Windows の SmartScreen が確認を出します。
