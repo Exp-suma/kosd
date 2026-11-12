@@ -58,7 +58,7 @@ val NAV_GROUPS = listOf(
         NavItem("/admin/board", "掲示板・車両管理", Icons.Outlined.AdminPanelSettings, "/admin"),
     )),
     NavGroup("撮影・調査ツール", listOf(
-        NavItem("/camera", "カメラ接続（USB・Wi-Fi）", Icons.Outlined.Usb),
+        NavItem("/camera", "カメラ接続（CamBridge・USB）", Icons.Outlined.Usb),
         NavItem("/wifi", "Wi-Fi画像転送", Icons.Outlined.Wifi, "/wifi"),
         NavItem("/shoot/light", "AI撮影支援", Icons.Outlined.PhotoCamera, "/shoot"),
         NavItem("/meter", "露出計", Icons.Outlined.Camera, "/meter"),
