@@ -165,10 +165,10 @@ Web 版の `src/lib` の計算は `tools/logic-bundle` で 1 本の JavaScript�
 
 ## カメラ Wi-Fi 接続（CamBridge）
 
-`/camera`（カメラ統合コンソール）の「CamBridge を開く」から、[Exp-suma/APK](https://github.com/Exp-suma/APK) の CamBridge
-（リリース `latest-debug`・コミット `280ef50`）をそのまま開きます。
+`/camera`（カメラ接続）を開くと、[Exp-suma/APK](https://github.com/Exp-suma/APK) の CamBridge
+（リリース `latest-debug`・コミット `280ef50`）をそのまま表示します（Android 12 未満の端末と、USB・ブリッジ経由の接続は `/camera/console` のカメラ統合コンソール）。
 
-- ソースは `app/src/main/java/com/example/d750bridge/` に**無変更**で取り込み、別の画面（Activity）として動かしています。
+- ソースは `app/src/main/java/com/example/d750bridge/` に**無変更**で取り込み、その画面（`AppRoot`）をアプリの画面の中にそのまま埋め込んでいます。接続はアプリを開いている間、他の画面へ移っても保たれます。
 - 被写体検出のモデル（`efficientdet_lite0.tflite`・`blaze_face_short_range.tflite`）は、元のリポジトリの CI と同じ配布元から取得して `app/src/main/assets/` に入れています。
-- Android 12 以上が必要です（それ未満の端末ではボタンの代わりに案内を表示）。
+- Android 12 以上が必要です。
 - 元のリポジトリを更新したときは、上のフォルダを同じ場所にコピーし直せば反映されます。

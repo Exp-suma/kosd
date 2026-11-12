@@ -45,13 +45,5 @@
                 <data android:scheme="narabuspulse" android:host="auth" />
             </intent-filter>
         </activity>
-
-        <!-- カメラ Wi-Fi 接続（CamBridge・github.com/Exp-suma/APK をそのまま組み込み）。カメラ統合コンソールから開く。 -->
-        <activity
-            android:name="com.example.d750bridge.MainActivity"
-            android:exported="false"
-            android:label="CamBridge"
-            android:theme="@android:style/Theme.Material.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
     </application>
 </manifest>

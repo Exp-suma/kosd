@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -44,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -322,7 +324,6 @@ fun CameraConsoleScreen() {
                 }
             }
         }
-        item { CamBridgeLauncher() }
         if (cam.manualFocus) item { Panel { Text("⚠ MF（マニュアルフォーカス）です", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Warning); Muted("AFは作動しません。ピントは手動で合わせてください。${cam.focusRow.str("valueText")?.let { "（カメラの現在値: $it）" } ?: ""}", 11) } }
         if (cam.busy.isNotBlank()) item { Muted("⏳ ${cam.busy}", 11) }
         item {
@@ -600,15 +601,22 @@ fun CameraBridgeScreen() {
     }
 }
 
-/** カメラ Wi-Fi 接続（CamBridge）を開く。CamBridge はカメラの Wi-Fi に直接つなぐ専用画面で、Android 12 以上が必要。 */
+/**
+ * カメラ接続（/camera）。Android 12 以上では CamBridge（github.com/Exp-suma/APK をそのまま組み込み）を直接表示する。
+ * それ未満の端末では USB・ブリッジ経由のカメラ統合コンソールを出す。
+ */
 @Composable
-private fun CamBridgeLauncher() {
-    val context = LocalContext.current
-    Panel(title = "カメラ Wi-Fi 接続（CamBridge）", subtitle = "スマートフォンをカメラの Wi-Fi に直接つなぎ、ライブビュー・リモート撮影・AF・画像の取り込みを行います（Canon / Sony / Nikon / LUMIX）。ブリッジは不要です。") {
-        if (android.os.Build.VERSION.SDK_INT >= 31) {
-            SmallButton("CamBridge を開く", { context.startActivity(android.content.Intent(context, com.example.d750bridge.MainActivity::class.java)) }, icon = Icons.Outlined.Wifi, primary = true)
-        } else {
-            Text("この機能は Android 12 以上で使えます（この端末は Android ${android.os.Build.VERSION.RELEASE}）。下の USB 接続・ブリッジ経由の接続は使えます。", fontSize = 11.sp, color = Brand.Warning)
+fun CameraScreen() {
+    if (android.os.Build.VERSION.SDK_INT < 31) { CameraConsoleScreen(); return }
+    val nav = LocalNav.current
+    // 画面を移動しても接続を保つため、ViewModel はアクティビティ単位で持つ
+    val owner = androidx.activity.compose.LocalActivity.current as androidx.activity.ComponentActivity
+    val vm: com.example.d750bridge.MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel(viewModelStoreOwner = owner)
+    Column(Modifier.fillMaxSize().background(Color(0xFF0A0B0D))) {
+        Row(Modifier.fillMaxWidth().clickable { nav.go("/camera/console") }.padding(horizontal = 16.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("USB・ブリッジ経由の接続（カメラ統合コンソール）", fontSize = 11.sp, color = Color(0xFFB8BCC4), modifier = Modifier.weight(1f))
+            Text("開く ›", fontSize = 11.sp, color = Color(0xFFFFC21A))
         }
+        Box(Modifier.weight(1f).fillMaxWidth()) { com.example.d750bridge.ui.theme.CamTheme { com.example.d750bridge.ui.AppRoot(vm) } }
     }
 }
