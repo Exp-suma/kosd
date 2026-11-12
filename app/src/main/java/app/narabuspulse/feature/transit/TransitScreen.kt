@@ -348,6 +348,7 @@ private fun FavoritesBar(from: Place?, to: Place?, sortKey: String, reloadKey: I
 }
 
 private val COMPOSITION_COLOR = mapOf("bus" to Brand.Success, "transit" to INFO, "hybrid" to PURPLE)
+private val COMPOSITION_LABEL = mapOf("bus" to "奈良交通バスのみ", "transit" to "鉄道など", "hybrid" to "バス＋鉄道", "walk" to "徒歩のみ")
 
 /** 経路候補1件（Web: RouteResultCard.jsx + LegList.jsx） */
 @OptIn(ExperimentalLayoutApi::class)
@@ -358,7 +359,7 @@ private fun RouteResultCard(option: JsonElement, date: String, planId: String?) 
     Panel {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Tag("候補${option.int("rank") ?: ""}", Brand.MutedFg)
-            option.str("_comp")?.takeIf { it.isNotBlank() }?.let { Tag(it, COMPOSITION_COLOR[option.str("composition")] ?: INFO) }
+            option.str("_comp")?.takeIf { it.isNotBlank() }?.let { Tag(COMPOSITION_LABEL[it] ?: COMPOSITION_LABEL[option.str("composition")] ?: it, COMPOSITION_COLOR[option.str("composition")] ?: INFO) }
             if (option.bool("recommended") == true) Tag("推奨", Brand.Orange)
             option.str("_conf")?.takeIf { it.isNotBlank() }?.let { Muted(it, 10) }
         }
