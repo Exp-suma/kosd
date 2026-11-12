@@ -12,8 +12,8 @@
     "dist": "electron-builder --win portable --x64"
   },
   "devDependencies": {
-    "electron": "33.2.1",
-    "electron-builder": "25.1.8"
+    "electron": "45.1.0",
+    "electron-builder": "26.18.1"
   },
   "build": {
     "appId": "app.narabuspulse.desktop",

@@ -38,6 +38,7 @@ android {
             // 開発用：DEV_MINIFY=1 でリリース版と同じコード縮小（R8）をかけて動作確認できる
             if (System.getenv('DEV_MINIFY')) {
                 minifyEnabled true
+                shrinkResources true
                 proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             }
         }
